@@ -13,6 +13,14 @@ export interface MongoUser {
   lastName: string;
   role: string;
   isActive: boolean;
+  permissions: {
+    pos: boolean;
+    inventory: boolean;
+    customers: boolean;
+    reports: boolean;
+    employees: boolean;
+    settings: boolean;
+  };
   createdAt: Date;
 }
 
@@ -119,11 +127,69 @@ export class MongoStorage {
     return user || undefined;
   }
 
+  // Employee Management
+  async getEmployees(businessId: number): Promise<MongoUser[]> {
+    const employees = await this.db.collection('users').find({ 
+      businessId,
+      role: { $ne: 'admin' }
+    }).toArray() as MongoUser[];
+    return employees;
+  }
+
+  async getEmployeeCount(businessId: number): Promise<number> {
+    return await this.db.collection('users').countDocuments({ 
+      businessId,
+      role: { $ne: 'admin' }
+    });
+  }
+
+  async updateUserPermissions(id: number, businessId: number, permissions: MongoUser['permissions']): Promise<MongoUser> {
+    await this.db.collection('users').updateOne(
+      { id, businessId },
+      { $set: { permissions } }
+    );
+    
+    const user = await this.db.collection('users').findOne({ id, businessId }) as MongoUser;
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return user;
+  }
+
+  async deleteEmployee(id: number, businessId: number): Promise<boolean> {
+    const result = await this.db.collection('users').deleteOne({ 
+      id, 
+      businessId,
+      role: { $ne: 'admin' } // Prevent deleting admin
+    });
+    return result.deletedCount > 0;
+  }
+
+  async toggleEmployeeStatus(id: number, businessId: number): Promise<MongoUser> {
+    const user = await this.db.collection('users').findOne({ id, businessId }) as MongoUser;
+    if (!user) {
+      throw new Error('User not found');
+    }
+    
+    const newStatus = !user.isActive;
+    await this.db.collection('users').updateOne(
+      { id, businessId },
+      { $set: { isActive: newStatus } }
+    );
+    
+    return { ...user, isActive: newStatus };
+  }
+
   async createUser(user: Omit<MongoUser, 'id' | 'createdAt'>): Promise<MongoUser> {
     const id = await this.getNextId('users');
+    const defaultPermissions = user.role === 'admin' ? 
+      { pos: true, inventory: true, customers: true, reports: true, employees: true, settings: true } :
+      { pos: true, inventory: false, customers: false, reports: false, employees: false, settings: false };
+    
     const newUser = {
       ...user,
       id,
+      permissions: user.permissions || defaultPermissions,
       createdAt: new Date()
     };
     
