@@ -91,3 +91,33 @@
 .btn-secondary {
   @apply bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium px-6 py-2 rounded-lg transition-colors;
 }
+
+/* Custom scrollbar styles */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #0fac79;
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #0d8a63;
+}
+
+/* Apply custom scrollbar to specific elements */
+.pos-product-grid {
+  scrollbar-width: thin;
+  scrollbar-color: #0fac79 #f1f5f9;
+}
+
+.pos-cart-items {
+  scrollbar-width: thin;
+  scrollbar-color: #0fac79 #f1f5f9;
+}

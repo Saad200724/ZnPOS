@@ -28,7 +28,7 @@ export default function Sidebar() {
   const { user, business, logout } = useAuth();
 
   return (
-    <div className="w-64 emerald-gradient text-white flex-shrink-0 flex flex-col">
+    <div className="w-64 emerald-gradient text-white flex-shrink-0 flex flex-col h-screen">
       {/* Header */}
       <div className="p-6 border-b border-emerald-400">
         <div className="flex items-center space-x-3">
@@ -71,8 +71,8 @@ export default function Sidebar() {
         </div>
       </nav>
       
-      {/* User Profile */}
-      <div className="p-4">
+      {/* User Profile - Fixed at bottom */}
+      <div className="p-4 mt-auto">
         <div className="bg-emerald-700 rounded-lg p-4 mb-4">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center">

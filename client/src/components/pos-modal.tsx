@@ -203,39 +203,43 @@ export default function POSModal({ isOpen, onClose }: POSModalProps) {
       <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden p-0">
         <div className="flex h-[80vh]">
           {/* Product Selection */}
-          <div className="flex-1 p-6 border-r border-gray-200 overflow-y-auto">
-            <DialogHeader className="mb-6">
-              <DialogTitle>Products</DialogTitle>
-              <div className="flex items-center space-x-4">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                  <Input
-                    placeholder="Search products..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10"
-                  />
+          <div className="flex-1 flex flex-col border-r border-gray-200">
+            <div className="p-6 border-b border-gray-200">
+              <DialogHeader className="mb-6">
+                <DialogTitle>Products</DialogTitle>
+                <div className="flex items-center space-x-4">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <Input
+                      placeholder="Search products..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
+                  <Button size="icon" variant="outline">
+                    <Barcode className="h-4 w-4" />
+                  </Button>
                 </div>
-                <Button size="icon" variant="outline">
-                  <Barcode className="h-4 w-4" />
-                </Button>
-              </div>
-            </DialogHeader>
+              </DialogHeader>
+            </div>
 
             {/* Product Grid */}
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredProducts.map((product) => (
-                <Card
-                  key={product.id}
-                  className="p-4 cursor-pointer hover:shadow-md transition-shadow"
-                  onClick={() => addToCart(product)}
-                >
-                  <div className="w-full h-32 bg-gray-200 rounded-lg mb-3"></div>
-                  <h4 className="font-medium text-gray-900 mb-1">{product.name}</h4>
-                  <p className="text-emerald-600 font-semibold">${product.price}</p>
-                  <p className="text-xs text-gray-500 mt-1">Stock: {product.stock}</p>
-                </Card>
-              ))}
+            <div className="flex-1 p-6 overflow-y-auto custom-scrollbar pos-product-grid">
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+                {filteredProducts.map((product) => (
+                  <Card
+                    key={product.id}
+                    className="p-4 cursor-pointer hover:shadow-md transition-shadow"
+                    onClick={() => addToCart(product)}
+                  >
+                    <div className="w-full h-32 bg-gray-200 rounded-lg mb-3"></div>
+                    <h4 className="font-medium text-gray-900 mb-1">{product.name}</h4>
+                    <p className="text-emerald-600 font-semibold">${product.price}</p>
+                    <p className="text-xs text-gray-500 mt-1">Stock: {product.stock}</p>
+                  </Card>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -264,48 +268,50 @@ export default function POSModal({ isOpen, onClose }: POSModalProps) {
             </div>
 
             {/* Cart Items */}
-            <div className="flex-1 overflow-y-auto mb-6">
+            <div className="flex-1 mb-6">
               <h4 className="font-medium text-gray-900 mb-4">
                 Items ({cart.reduce((sum, item) => sum + item.quantity, 0)})
               </h4>
-              <div className="space-y-3">
-                {cart.map((item) => (
-                  <Card key={item.product.id} className="p-3">
-                    <div className="flex items-center justify-between mb-2">
-                      <h5 className="font-medium text-gray-900">{item.product.name}</h5>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => removeFromCart(item.product.id)}
-                        className="text-red-500 hover:text-red-700 p-1"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
+              <div className="h-full overflow-y-auto custom-scrollbar pos-cart-items">
+                <div className="space-y-3 pr-2">
+                  {cart.map((item) => (
+                    <Card key={item.product.id} className="p-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <h5 className="font-medium text-gray-900">{item.product.name}</h5>
                         <Button
                           size="sm"
-                          variant="outline"
-                          onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
-                          className="w-7 h-7 p-0"
+                          variant="ghost"
+                          onClick={() => removeFromCart(item.product.id)}
+                          className="text-red-500 hover:text-red-700 p-1"
                         >
-                          <Minus className="h-3 w-3" />
-                        </Button>
-                        <span className="font-medium">{item.quantity}</span>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                          className="w-7 h-7 p-0"
-                        >
-                          <Plus className="h-3 w-3" />
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
-                      <span className="font-semibold text-emerald-600">${item.total.toFixed(2)}</span>
-                    </div>
-                  </Card>
-                ))}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                            className="w-7 h-7 p-0"
+                          >
+                            <Minus className="h-3 w-3" />
+                          </Button>
+                          <span className="font-medium">{item.quantity}</span>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                            className="w-7 h-7 p-0"
+                          >
+                            <Plus className="h-3 w-3" />
+                          </Button>
+                        </div>
+                        <span className="font-semibold text-emerald-600">${item.total.toFixed(2)}</span>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
               </div>
             </div>
 
