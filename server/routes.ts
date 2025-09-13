@@ -12,6 +12,14 @@ declare module 'express-session' {
       firstName: string;
       lastName: string;
       role: string;
+      permissions?: {
+        pos: boolean;
+        inventory: boolean;
+        customers: boolean;
+        reports: boolean;
+        employees: boolean;
+        settings: boolean;
+      };
     };
   }
 }
@@ -33,6 +41,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(401).json({ message: "Unauthorized" });
     }
     next();
+  }
+
+  // Permission middleware
+  function requirePermission(permission: 'pos' | 'inventory' | 'customers' | 'reports' | 'employees' | 'settings') {
+    return (req: any, res: any, next: any) => {
+      if (!req.session.user) {
+        return res.status(401).json({ message: 'Unauthorized' });
+      }
+      
+      const user = req.session.user;
+      if (user.role === 'admin' || user.permissions?.[permission]) {
+        return next();
+      }
+      
+      return res.status(403).json({ message: 'Access denied' });
+    };
+  }
+
+  // Admin-only middleware
+  function requireAdmin(req: any, res: any, next: any) {
+    if (!req.session.user) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+    
+    if (req.session.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Admin access required' });
+    }
+    
+    return next();
   }
 
   // Auth routes
@@ -62,6 +99,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         firstName: user.firstName,
         lastName: user.lastName,
         role: user.role,
+        permissions: user.permissions,
       };
 
       res.json({ user: req.session.user, business });
@@ -87,6 +125,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         firstName: user.firstName,
         lastName: user.lastName,
         role: user.role,
+        permissions: user.permissions,
       };
 
       const business = await storage.getBusiness(user.businessId);
@@ -229,6 +268,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  const httpServer = createServer(app);
+  // Employee Management Routes (Admin only)\n  app.get(\"/api/employees\", requireAdmin, async (req, res) => {\n    try {\n      const employees = await storage.getEmployees(req.session.user!.businessId);\n      res.json(employees);\n    } catch (error: any) {\n      res.status(400).json({ message: error.message });\n    }\n  });\n\n  app.post(\"/api/employees\", requireAdmin, async (req, res) => {\n    try {\n      const count = await storage.getEmployeeCount(req.session.user!.businessId);\n      if (count >= 10) return res.status(400).json({ message: \"Maximum of 10 employees allowed\" });\n\n      const userData = {\n        ...req.body,\n        businessId: req.session.user!.businessId,\n        role: 'employee',\n        isActive: true,\n      };\n      const employee = await storage.createUser(userData);\n      res.json(employee);\n    } catch (error: any) {\n      res.status(400).json({ message: error.message });\n    }\n  });\n\n  app.put(\"/api/employees/:id/permissions\", requireAdmin, async (req, res) => {\n    try {\n      const employeeId = parseInt(req.params.id);\n      const { permissions } = req.body;\n      const employee = await storage.updateUserPermissions(employeeId, req.session.user!.businessId, permissions);\n      res.json(employee);\n    } catch (error: any) {\n      res.status(400).json({ message: error.message });\n    }\n  });\n\n  app.put(\"/api/employees/:id/status\", requireAdmin, async (req, res) => {\n    try {\n      const employeeId = parseInt(req.params.id);\n      const employee = await storage.toggleEmployeeStatus(employeeId, req.session.user!.businessId);\n      res.json(employee);\n    } catch (error: any) {\n      res.status(400).json({ message: error.message });\n    }\n  });\n\n  app.delete(\"/api/employees/:id\", requireAdmin, async (req, res) => {\n    try {\n      const employeeId = parseInt(req.params.id);\n      const deleted = await storage.deleteEmployee(employeeId, req.session.user!.businessId);\n      if (!deleted) return res.status(404).json({ message: \"Employee not found\" });\n      res.json({ message: \"Employee deleted successfully\" });\n    } catch (error: any) {\n      res.status(400).json({ message: error.message });\n    }\n  });\n\n  const httpServer = createServer(app);
   return httpServer;
 }
