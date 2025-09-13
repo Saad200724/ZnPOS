@@ -92,7 +92,32 @@
   @apply bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium px-6 py-2 rounded-lg transition-colors;
 }
 
-/* Custom scrollbar styles */
+/* Global scrollbar styles for all elements */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #0fac79;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #0d8a63;
+}
+
+/* Global scrollbar for Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #0fac79 #f1f5f9;
+}
+
+/* Custom scrollbar styles for specific components */
 .custom-scrollbar::-webkit-scrollbar {
   width: 8px;
 }
