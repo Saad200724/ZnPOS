@@ -122,7 +122,7 @@ export class MongoStorage {
   // Auth
   async getUserByUsernameAndPassword(username: string, password: string): Promise<MongoUser | undefined> {
     const user = await this.db.collection('users').findOne({ 
-      username
+      $or: [{ username }, { email: username }]
     }) as MongoUser | null;
     
     if (!user) {
