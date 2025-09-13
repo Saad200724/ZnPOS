@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { MongoStorage } from "./mongo-storage";
 import session from "express-session";
+import { insertProductSchema, insertCustomerSchema, insertTransactionSchema, insertUserSchema } from "../shared/schema";
 
 declare module 'express-session' {
   interface SessionData {
@@ -155,7 +156,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Dashboard routes
-  app.get("/api/dashboard/stats", requireAuth, async (req, res) => {
+  app.get("/api/dashboard/stats", requireAuth, requirePermission('reports'), async (req, res) => {
     try {
       const stats = await storage.getDashboardStats(req.session.user!.businessId);
       res.json(stats);
@@ -164,7 +165,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/dashboard/recent-transactions", requireAuth, async (req, res) => {
+  app.get("/api/dashboard/recent-transactions", requireAuth, requirePermission('reports'), async (req, res) => {
     try {
       const transactions = await storage.getTransactions(req.session.user!.businessId, 10);
       res.json(transactions);
@@ -173,7 +174,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/dashboard/top-products", requireAuth, async (req, res) => {
+  app.get("/api/dashboard/top-products", requireAuth, requirePermission('reports'), async (req, res) => {
     try {
       const products = await storage.getTopProducts(req.session.user!.businessId, 5);
       res.json(products);
@@ -182,7 +183,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/dashboard/low-stock", requireAuth, async (req, res) => {
+  app.get("/api/dashboard/low-stock", requireAuth, requirePermission('inventory'), async (req, res) => {
     try {
       const products = await storage.getLowStockProducts(req.session.user!.businessId);
       res.json(products);
@@ -192,7 +193,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Products routes
-  app.get("/api/products", requireAuth, async (req, res) => {
+  app.get("/api/products", requireAuth, requirePermission('inventory'), async (req, res) => {
     try {
       const products = await storage.getProducts(req.session.user!.businessId);
       res.json(products);
@@ -201,7 +202,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/products", requireAuth, async (req, res) => {
+  app.post("/api/products", requireAuth, requirePermission('inventory'), async (req, res) => {
     try {
       const productData = insertProductSchema.parse({
         ...req.body,
@@ -215,7 +216,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Customers routes
-  app.get("/api/customers", requireAuth, async (req, res) => {
+  app.get("/api/customers", requireAuth, requirePermission('customers'), async (req, res) => {
     try {
       const customers = await storage.getCustomers(req.session.user!.businessId);
       res.json(customers);
@@ -224,7 +225,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/customers", requireAuth, async (req, res) => {
+  app.post("/api/customers", requireAuth, requirePermission('customers'), async (req, res) => {
     try {
       const customerData = insertCustomerSchema.parse({
         ...req.body,
@@ -238,7 +239,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Transactions routes
-  app.get("/api/transactions", requireAuth, async (req, res) => {
+  app.get("/api/transactions", requireAuth, requirePermission('reports'), async (req, res) => {
     try {
       const transactions = await storage.getTransactions(req.session.user!.businessId);
       res.json(transactions);
@@ -247,7 +248,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/transactions", requireAuth, async (req, res) => {
+  app.post("/api/transactions", requireAuth, requirePermission('pos'), async (req, res) => {
     try {
       const { transaction, items } = req.body;
       
@@ -268,6 +269,66 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Employee Management Routes (Admin only)\n  app.get(\"/api/employees\", requireAdmin, async (req, res) => {\n    try {\n      const employees = await storage.getEmployees(req.session.user!.businessId);\n      res.json(employees);\n    } catch (error: any) {\n      res.status(400).json({ message: error.message });\n    }\n  });\n\n  app.post(\"/api/employees\", requireAdmin, async (req, res) => {\n    try {\n      const count = await storage.getEmployeeCount(req.session.user!.businessId);\n      if (count >= 10) return res.status(400).json({ message: \"Maximum of 10 employees allowed\" });\n\n      const userData = {\n        ...req.body,\n        businessId: req.session.user!.businessId,\n        role: 'employee',\n        isActive: true,\n      };\n      const employee = await storage.createUser(userData);\n      res.json(employee);\n    } catch (error: any) {\n      res.status(400).json({ message: error.message });\n    }\n  });\n\n  app.put(\"/api/employees/:id/permissions\", requireAdmin, async (req, res) => {\n    try {\n      const employeeId = parseInt(req.params.id);\n      const { permissions } = req.body;\n      const employee = await storage.updateUserPermissions(employeeId, req.session.user!.businessId, permissions);\n      res.json(employee);\n    } catch (error: any) {\n      res.status(400).json({ message: error.message });\n    }\n  });\n\n  app.put(\"/api/employees/:id/status\", requireAdmin, async (req, res) => {\n    try {\n      const employeeId = parseInt(req.params.id);\n      const employee = await storage.toggleEmployeeStatus(employeeId, req.session.user!.businessId);\n      res.json(employee);\n    } catch (error: any) {\n      res.status(400).json({ message: error.message });\n    }\n  });\n\n  app.delete(\"/api/employees/:id\", requireAdmin, async (req, res) => {\n    try {\n      const employeeId = parseInt(req.params.id);\n      const deleted = await storage.deleteEmployee(employeeId, req.session.user!.businessId);\n      if (!deleted) return res.status(404).json({ message: \"Employee not found\" });\n      res.json({ message: \"Employee deleted successfully\" });\n    } catch (error: any) {\n      res.status(400).json({ message: error.message });\n    }\n  });\n\n  const httpServer = createServer(app);
+  // Employee Management Routes (Admin only)
+  app.get("/api/employees", requireAdmin, async (req, res) => {
+    try {
+      const employees = await storage.getEmployees(req.session.user!.businessId);
+      res.json(employees);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/employees", requireAdmin, async (req, res) => {
+    try {
+      const count = await storage.getEmployeeCount(req.session.user!.businessId);
+      if (count >= 10) return res.status(400).json({ message: "Maximum of 10 employees allowed" });
+
+      const userData = insertUserSchema.parse({
+        ...req.body,
+        businessId: req.session.user!.businessId,
+        role: 'employee',
+        isActive: true,
+      });
+      const employee = await storage.createUser(userData);
+      res.json(employee);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  app.put("/api/employees/:id/permissions", requireAdmin, async (req, res) => {
+    try {
+      const employeeId = parseInt(req.params.id);
+      const { permissions } = req.body;
+      const employee = await storage.updateUserPermissions(employeeId, req.session.user!.businessId, permissions);
+      res.json(employee);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  app.put("/api/employees/:id/status", requireAdmin, async (req, res) => {
+    try {
+      const employeeId = parseInt(req.params.id);
+      const employee = await storage.toggleEmployeeStatus(employeeId, req.session.user!.businessId);
+      res.json(employee);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  app.delete("/api/employees/:id", requireAdmin, async (req, res) => {
+    try {
+      const employeeId = parseInt(req.params.id);
+      const deleted = await storage.deleteEmployee(employeeId, req.session.user!.businessId);
+      if (!deleted) return res.status(404).json({ message: "Employee not found" });
+      res.json({ message: "Employee deleted successfully" });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  const httpServer = createServer(app);
   return httpServer;
 }

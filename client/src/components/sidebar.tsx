@@ -14,13 +14,13 @@ import {
 import znforgeLogo from "@assets/ZnForge_Logo_1757783430022.png";
 
 const navigation = [
-  { name: "Dashboard", href: "/", icon: LayoutDashboard },
-  { name: "Point of Sale", href: "/pos", icon: ShoppingCart },
-  { name: "Inventory", href: "/inventory", icon: Package },
-  { name: "Customers", href: "/customers", icon: Users },
-  { name: "Employees", href: "/employees", icon: UserCheck },
-  { name: "Reports", href: "/reports", icon: BarChart3 },
-  { name: "Settings", href: "/settings", icon: Settings },
+  { name: "Dashboard", href: "/", icon: LayoutDashboard, permission: null },
+  { name: "Point of Sale", href: "/pos", icon: ShoppingCart, permission: "pos" as const },
+  { name: "Inventory", href: "/inventory", icon: Package, permission: "inventory" as const },
+  { name: "Customers", href: "/customers", icon: Users, permission: "customers" as const },
+  { name: "Employees", href: "/employees", icon: UserCheck, permission: "employees" as const },
+  { name: "Reports", href: "/reports", icon: BarChart3, permission: "reports" as const },
+  { name: "Settings", href: "/settings", icon: Settings, permission: "settings" as const },
 ];
 
 export default function Sidebar() {
@@ -45,20 +45,29 @@ export default function Sidebar() {
       {/* Navigation */}
       <nav className="flex-1 mt-6">
         <div className="px-4 space-y-2">
-          {navigation.map((item) => {
-            const Icon = item.icon;
-            const isActive = location === item.href || 
-              (item.href === "/" && location === "/");
-            
-            return (
-              <Link key={item.name} href={item.href}>
-                <div className={`sidebar-item ${isActive ? 'active' : ''}`}>
-                  <Icon className="w-5 h-5 mr-3" />
-                  {item.name}
-                </div>
-              </Link>
-            );
-          })}
+          {navigation
+            .filter((item) => {
+              // Show dashboard to everyone
+              if (!item.permission) return true;
+              // Show all to admin
+              if (user?.role === 'admin') return true;
+              // Show based on user permissions
+              return user?.permissions?.[item.permission] === true;
+            })
+            .map((item) => {
+              const Icon = item.icon;
+              const isActive = location === item.href || 
+                (item.href === "/" && location === "/");
+              
+              return (
+                <Link key={item.name} href={item.href}>
+                  <div className={`sidebar-item ${isActive ? 'active' : ''}`}>
+                    <Icon className="w-5 h-5 mr-3" />
+                    {item.name}
+                  </div>
+                </Link>
+              );
+            })}
         </div>
       </nav>
       

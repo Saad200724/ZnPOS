@@ -1,5 +1,6 @@
 import { ObjectId, Db } from 'mongodb';
 import { getDb } from './mongodb';
+import bcrypt from 'bcrypt';
 
 // Types adapted for MongoDB
 export interface MongoUser {
@@ -121,10 +122,20 @@ export class MongoStorage {
   // Auth
   async getUserByUsernameAndPassword(username: string, password: string): Promise<MongoUser | undefined> {
     const user = await this.db.collection('users').findOne({ 
-      username, 
-      password 
+      username
     }) as MongoUser | null;
-    return user || undefined;
+    
+    if (!user) {
+      return undefined;
+    }
+    
+    // Compare the provided password with the hashed password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return undefined;
+    }
+    
+    return user;
   }
 
   // Employee Management
@@ -132,6 +143,8 @@ export class MongoStorage {
     const employees = await this.db.collection('users').find({ 
       businessId,
       role: { $ne: 'admin' }
+    }, {
+      projection: { password: 0 } // Exclude password field
     }).toArray() as MongoUser[];
     return employees;
   }
@@ -149,7 +162,10 @@ export class MongoStorage {
       { $set: { permissions } }
     );
     
-    const user = await this.db.collection('users').findOne({ id, businessId }) as MongoUser;
+    const user = await this.db.collection('users').findOne(
+      { id, businessId },
+      { projection: { password: 0 } } // Exclude password field
+    ) as MongoUser;
     if (!user) {
       throw new Error('User not found');
     }
@@ -166,7 +182,10 @@ export class MongoStorage {
   }
 
   async toggleEmployeeStatus(id: number, businessId: number): Promise<MongoUser> {
-    const user = await this.db.collection('users').findOne({ id, businessId }) as MongoUser;
+    const user = await this.db.collection('users').findOne(
+      { id, businessId },
+      { projection: { password: 0 } } // Exclude password field
+    ) as MongoUser;
     if (!user) {
       throw new Error('User not found');
     }
@@ -186,15 +205,23 @@ export class MongoStorage {
       { pos: true, inventory: true, customers: true, reports: true, employees: true, settings: true } :
       { pos: true, inventory: false, customers: false, reports: false, employees: false, settings: false };
     
+    // Hash the password before storing
+    const saltRounds = 12;
+    const hashedPassword = await bcrypt.hash(user.password, saltRounds);
+    
     const newUser = {
       ...user,
       id,
+      password: hashedPassword,
       permissions: user.permissions || defaultPermissions,
       createdAt: new Date()
     };
     
     await this.db.collection('users').insertOne(newUser);
-    return newUser;
+    
+    // Return user without password for security
+    const { password, ...userWithoutPassword } = newUser;
+    return userWithoutPassword as MongoUser;
   }
 
   // Business
