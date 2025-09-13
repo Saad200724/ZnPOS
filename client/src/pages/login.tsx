@@ -31,6 +31,7 @@ export default function Login() {
             </div>
             <h1 className="text-3xl font-bold text-white">ZnPOS</h1>
           </div>
+          <p className="text-emerald-200 text-lg font-medium mb-2">Meow Meow Pet Shop</p>
           <p className="text-emerald-100">Modern Point of Sale System</p>
         </div>
 

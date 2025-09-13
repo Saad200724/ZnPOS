@@ -37,7 +37,7 @@ export default function Sidebar() {
           </div>
           <div>
             <h1 className="text-xl font-bold">ZnPOS</h1>
-            <p className="text-emerald-100 text-sm">{business?.name}</p>
+            <p className="text-emerald-200 text-sm font-medium">Meow Meow Pet Shop</p>
           </div>
         </div>
       </div>
@@ -72,7 +72,7 @@ export default function Sidebar() {
               </span>
             </div>
             <div>
-              <p className="font-medium">{user?.firstName || 'User'} {user?.lastName || 'Name'}</p>
+              <p className="font-medium">{user?.username || 'User'}</p>
               <p className="text-emerald-200 text-sm capitalize">{user?.role || 'employee'}</p>
             </div>
           </div>
