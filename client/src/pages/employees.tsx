@@ -71,17 +71,14 @@ export default function EmployeesPage() {
         credentials: 'include'
       });
       if (!response.ok) throw new Error('Failed to fetch employees');
-      return response.json() as Employee[];
+      return response.json();
     }
   });
 
   // Add employee mutation
   const addEmployeeMutation = useMutation({
     mutationFn: async (data: z.infer<typeof addEmployeeSchema>) => {
-      return apiRequest('/api/employees', {
-        method: 'POST',
-        body: JSON.stringify(data)
-      });
+      return apiRequest('POST', '/api/employees', data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/employees'] });
@@ -100,10 +97,7 @@ export default function EmployeesPage() {
   // Update permissions mutation
   const updatePermissionsMutation = useMutation({
     mutationFn: async ({ id, permissions }: { id: number, permissions: Employee['permissions'] }) => {
-      return apiRequest(`/api/employees/${id}/permissions`, {
-        method: 'PUT',
-        body: JSON.stringify({ permissions })
-      });
+      return apiRequest('PUT', `/api/employees/${id}/permissions`, { permissions });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/employees'] });
@@ -114,9 +108,7 @@ export default function EmployeesPage() {
   // Toggle status mutation
   const toggleStatusMutation = useMutation({
     mutationFn: async (id: number) => {
-      return apiRequest(`/api/employees/${id}/status`, {
-        method: 'PUT'
-      });
+      return apiRequest('PUT', `/api/employees/${id}/status`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/employees'] });
@@ -127,9 +119,7 @@ export default function EmployeesPage() {
   // Delete employee mutation
   const deleteEmployeeMutation = useMutation({
     mutationFn: async (id: number) => {
-      return apiRequest(`/api/employees/${id}`, {
-        method: 'DELETE'
-      });
+      return apiRequest('DELETE', `/api/employees/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/employees'] });

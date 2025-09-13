@@ -49,10 +49,10 @@ export default function Sidebar() {
             .filter((item) => {
               // Show dashboard to everyone
               if (!item.permission) return true;
-              // Show all to admin
+              // Show all to admin users
               if (user?.role === 'admin') return true;
-              // Show based on user permissions
-              return user?.permissions?.[item.permission] === true;
+              // For non-admin users, show basic pages (could add permission logic later)
+              return false;
             })
             .map((item) => {
               const Icon = item.icon;
