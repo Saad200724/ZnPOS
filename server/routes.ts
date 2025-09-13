@@ -73,6 +73,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     return next();
   }
 
+  // Debug route to check users
+  app.get("/api/debug/users", async (req, res) => {
+    try {
+      const users = await storage.getAllUsers();
+      res.json({ users: users.map(u => ({ 
+        id: u.id, 
+        username: u.username, 
+        email: u.email, 
+        role: u.role, 
+        isActive: u.isActive 
+      })) });
+    } catch (error: any) {
+      console.error("Debug users error:", error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   // Test route to create default admin user
   app.post("/api/create-test-user", async (req, res) => {
     try {
@@ -158,9 +175,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/login", async (req, res) => {
     try {
       const { username, password } = req.body;
+      console.log(`Login attempt - Username: '${username}', Password: '${password}'`);
       
       const user = await storage.getUserByUsernameAndPassword(username, password);
+      console.log(`User found: ${!!user}, User active: ${user?.isActive}`);
+      
       if (!user || !user.isActive) {
+        console.log("Login failed - invalid credentials or inactive user");
         return res.status(401).json({ message: "Invalid credentials" });
       }
 

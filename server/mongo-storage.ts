@@ -149,6 +149,14 @@ export class MongoStorage {
     return employees;
   }
 
+  // Debug method to get all users
+  async getAllUsers(): Promise<MongoUser[]> {
+    const users = await this.db.collection('users').find({}, {
+      projection: { password: 0 } // Exclude password field for security
+    }).toArray() as MongoUser[];
+    return users;
+  }
+
   async getEmployeeCount(businessId: number): Promise<number> {
     return await this.db.collection('users').countDocuments({ 
       businessId,
