@@ -50,19 +50,6 @@ export default function EmployeesPage() {
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
-  // Only allow admin access
-  if (user?.role !== 'admin') {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <Card>
-          <CardContent className="pt-6">
-            <p className="text-center text-muted-foreground">Access denied. Admin privileges required.</p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
   // Fetch employees
   const { data: employees = [], isLoading } = useQuery({
     queryKey: ['/api/employees'],
@@ -146,6 +133,19 @@ export default function EmployeesPage() {
     const newPermissions = { ...employee.permissions, [permission]: value };
     updatePermissionsMutation.mutate({ id: employee.id, permissions: newPermissions });
   };
+
+  // Only allow admin access
+  if (user?.role !== 'admin') {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <Card>
+          <CardContent className="pt-6">
+            <p className="text-center text-muted-foreground">Access denied. Admin privileges required.</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
