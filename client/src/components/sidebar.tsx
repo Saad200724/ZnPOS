@@ -11,6 +11,7 @@ import {
   Settings, 
   LogOut 
 } from "lucide-react";
+import znforgeLogo from "@assets/ZnForge_Logo_1757783430022.png";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
@@ -31,11 +32,11 @@ export default function Sidebar() {
       {/* Header */}
       <div className="p-6 border-b border-emerald-400">
         <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-            <span className="text-emerald-600 font-bold text-lg">Z</span>
+          <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center p-1">
+            <img src={znforgeLogo} alt="ZnPOS Logo" className="w-full h-full object-contain" />
           </div>
           <div>
-            <h1 className="text-xl font-bold">ZnForge POS</h1>
+            <h1 className="text-xl font-bold">ZnPOS</h1>
             <p className="text-emerald-100 text-sm">{business?.name}</p>
           </div>
         </div>
