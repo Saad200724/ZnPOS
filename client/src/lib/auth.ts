@@ -63,11 +63,13 @@ export function useAuth(): AuthState {
         await checkAuth(); // Refresh user data
         window.location.href = "/"; // Redirect to home
       } else {
-        throw new Error("Login failed");
+        const errorData = await response.json().catch(() => ({ message: "Login failed" }));
+        throw new Error(errorData.message || "Login failed");
       }
     } catch (error) {
       console.error("Login error:", error);
-      alert("Login failed. Please check your username and password.");
+      const message = error instanceof Error ? error.message : "Login failed. Please check your username and password.";
+      alert(message);
     } finally {
       setIsLoggingIn(false);
     }
