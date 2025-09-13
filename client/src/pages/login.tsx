@@ -10,14 +10,14 @@ export default function Login() {
   const { login, isLoggingIn } = useAuth();
   const [loginForm, setLoginForm] = useState({
     username: "",
-    businessId: ""
+    password: ""
   });
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     login({
       username: loginForm.username,
-      businessId: parseInt(loginForm.businessId)
+      password: loginForm.password
     });
   };
 
@@ -37,11 +37,6 @@ export default function Login() {
         <Card>
           <CardHeader>
             <CardTitle className="text-center">Welcome</CardTitle>
-            <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 mt-4">
-              <h4 className="font-medium text-emerald-800 mb-2">Demo Credentials</h4>
-              <p className="text-sm text-emerald-700">Username: <strong>admin</strong></p>
-              <p className="text-sm text-emerald-700">Business ID: <strong>1</strong></p>
-            </div>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleLogin} className="space-y-4">
@@ -56,13 +51,13 @@ export default function Login() {
                 />
               </div>
               <div>
-                <Label htmlFor="businessId">Business ID</Label>
+                <Label htmlFor="password">Password</Label>
                 <Input
-                  id="businessId"
-                  data-testid="input-business-id"
-                  type="number"
-                  value={loginForm.businessId}
-                  onChange={(e) => setLoginForm({...loginForm, businessId: e.target.value})}
+                  id="password"
+                  data-testid="input-password"
+                  type="password"
+                  value={loginForm.password}
+                  onChange={(e) => setLoginForm({...loginForm, password: e.target.value})}
                   required
                 />
               </div>

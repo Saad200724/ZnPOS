@@ -26,7 +26,7 @@ import { eq, and, desc, sql, sum, count } from "drizzle-orm";
 
 export interface IStorage {
   // Auth
-  getUserByUsernameAndBusiness(username: string, businessId: number): Promise<User | undefined>;
+  getUserByUsernameAndPassword(username: string, password: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   
   // Business
@@ -66,11 +66,11 @@ export interface IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
-  async getUserByUsernameAndBusiness(username: string, businessId: number): Promise<User | undefined> {
+  async getUserByUsernameAndPassword(username: string, password: string): Promise<User | undefined> {
     const [user] = await db
       .select()
       .from(users)
-      .where(and(eq(users.username, username), eq(users.businessId, businessId)));
+      .where(and(eq(users.username, username), eq(users.password, password)));
     return user || undefined;
   }
 

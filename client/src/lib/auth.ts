@@ -20,7 +20,7 @@ export interface AuthState {
   isAuthenticated: boolean;
   isLoggingIn: boolean;
   isRegistering: boolean;
-  login: (credentials: { username: string; businessId: number }) => Promise<void>;
+  login: (credentials: { username: string; password: string }) => Promise<void>;
   register: (data: any) => Promise<void>;
   logout: () => Promise<void>;
 }
@@ -52,12 +52,12 @@ export function useAuth(): AuthState {
     }
   };
 
-  const handleLogin = async (credentials: { username: string; businessId: number }) => {
+  const handleLogin = async (credentials: { username: string; password: string }) => {
     setIsLoggingIn(true);
     try {
       const response = await apiRequest("POST", "/api/login", {
         username: credentials.username,
-        businessId: credentials.businessId
+        password: credentials.password
       });
       if (response.ok) {
         await checkAuth(); // Refresh user data
@@ -67,7 +67,7 @@ export function useAuth(): AuthState {
       }
     } catch (error) {
       console.error("Login error:", error);
-      alert("Login failed. Please check your username and business ID.");
+      alert("Login failed. Please check your username and password.");
     } finally {
       setIsLoggingIn(false);
     }

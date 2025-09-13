@@ -1,8 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./storage";
+import { MongoStorage } from "./mongo-storage";
 import session from "express-session";
-import { insertUserSchema, insertBusinessSchema, insertProductSchema, insertCustomerSchema, insertTransactionSchema } from "@shared/schema";
 
 declare module 'express-session' {
   interface SessionData {
@@ -18,6 +17,8 @@ declare module 'express-session' {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Initialize MongoDB storage after connection is established
+  const storage = new MongoStorage();
   // Session middleware
   app.use(session({
     secret: process.env.SESSION_SECRET || 'znforge-pos-secret',
@@ -37,12 +38,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Auth routes
   app.post("/api/register", async (req, res) => {
     try {
-      const businessData = insertBusinessSchema.parse(req.body.business);
-      const userData = insertUserSchema.parse({
+      const businessData = req.body.business;
+      const userData = {
         ...req.body.user,
         businessId: 0, // Will be set after business creation
         role: 'admin'
-      });
+      };
 
       // Create business first
       const business = await storage.createBusiness(businessData);
@@ -71,9 +72,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/login", async (req, res) => {
     try {
-      const { username, businessId } = req.body;
+      const { username, password } = req.body;
       
-      const user = await storage.getUserByUsernameAndBusiness(username, businessId);
+      const user = await storage.getUserByUsernameAndPassword(username, password);
       if (!user || !user.isActive) {
         return res.status(401).json({ message: "Invalid credentials" });
       }
