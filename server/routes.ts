@@ -90,29 +90,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Test route to create default admin user
-  app.post("/api/create-test-user", async (req, res) => {
+  // Create user with specific credentials
+  app.post("/api/create-meow-user", async (req, res) => {
     try {
-      // Check if user already exists
-      const existingUser = await storage.getUserByUsernameAndPassword("admin", "admin123").catch(() => null);
-      if (existingUser) {
-        return res.json({ message: "Test user already exists", user: { username: "admin" } });
+      // Check if business exists, if not create it
+      let businessId = 4; // Default to existing business ID
+      try {
+        await storage.getBusiness(businessId);
+      } catch {
+        // Create business if it doesn't exist
+        const business = await storage.createBusiness({
+          name: "Meow Meow Pet Shop",
+          email: "admin@meow.com",
+          phone: "123-456-7890",
+          address: "123 Pet Street",
+          taxRate: "10",
+          currency: "USD"
+        });
+        businessId = business.id;
       }
-
-      // Create business first
-      const business = await storage.createBusiness({
-        name: "Meow Meow Pet Shop",
-        email: "admin@meow.com",
-        phone: "123-456-7890",
-        address: "123 Pet Street",
-        taxRate: "10",
-        currency: "USD"
-      });
       
-      // Create admin user
+      // Create admin user with username admin@meow
       const user = await storage.createUser({
-        businessId: business.id,
-        username: "admin",
+        businessId: businessId,
+        username: "admin@meow",
         email: "admin@meow.com",
         password: "admin123",
         firstName: "Admin",
@@ -129,7 +130,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       });
 
-      res.json({ message: "Test user created successfully", user: { username: "admin" }, business });
+      res.json({ message: "Meow user created successfully", user: { username: "admin@meow", id: user.id } });
+    } catch (error: any) {
+      console.error("Meow user creation error:", error);
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  // Test route to create default admin user
+  app.post("/api/create-test-user", async (req, res) => {
+    try {
+      // Check if user already exists
+      const existingUser = await storage.getUserByUsernameAndPassword("admin@meow", "admin123").catch(() => null);
+      if (existingUser) {
+        return res.json({ message: "Test user already exists", user: { username: "admin@meow" } });
+      }
+
+      // Create business first
+      const business = await storage.createBusiness({
+        name: "Meow Meow Pet Shop",
+        email: "admin@meow.com",
+        phone: "123-456-7890",
+        address: "123 Pet Street",
+        taxRate: "10",
+        currency: "USD"
+      });
+      
+      // Create admin user with username admin@meow
+      const user = await storage.createUser({
+        businessId: business.id,
+        username: "admin@meow",
+        email: "admin@meow.com",
+        password: "admin123",
+        firstName: "Admin",
+        lastName: "User",
+        role: "admin",
+        isActive: true,
+        permissions: {
+          pos: true,
+          inventory: true,
+          customers: true,
+          reports: true,
+          employees: true,
+          settings: true
+        }
+      });
+
+      res.json({ message: "Test user created successfully", user: { username: "admin@meow" }, business });
     } catch (error: any) {
       console.error("Test user creation error:", error);
       res.status(400).json({ message: error.message });

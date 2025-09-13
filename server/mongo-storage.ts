@@ -112,25 +112,56 @@ export class MongoStorage {
   // Helper to get next ID
   async getNextId(collection: string): Promise<number> {
     const counter = await this.db.collection('counters').findOneAndUpdate(
-      { _id: collection },
+      { _id: collection as any },
       { $inc: { seq: 1 } },
       { upsert: true, returnDocument: 'after' }
     );
-    return counter?.seq || 1;
+    return counter?.value?.seq || counter?.seq || 1;
   }
 
   // Auth
   async getUserByUsernameAndPassword(username: string, password: string): Promise<MongoUser | undefined> {
+    const trimmedUsername = username.trim();
+    
     const user = await this.db.collection('users').findOne({ 
-      $or: [{ username }, { email: username }]
+      $or: [{ username: trimmedUsername }, { email: trimmedUsername }],
+      isActive: true
     }) as MongoUser | null;
     
     if (!user) {
       return undefined;
     }
     
-    // Compare the provided password with the hashed password
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    // First try bcrypt comparison
+    let isPasswordValid = false;
+    try {
+      isPasswordValid = await bcrypt.compare(password, user.password);
+    } catch (error) {
+      // If bcrypt fails, the password might not be properly hashed
+      console.log(`Bcrypt comparison failed for user ${user.username}, attempting legacy password check`);
+    }
+    
+    // If bcrypt fails, check if it's a plaintext password (legacy case)
+    if (!isPasswordValid && user.password === password) {
+      console.log(`Legacy plaintext password detected for user ${user.username}, upgrading to bcrypt`);
+      
+      // Rehash the password properly
+      const saltRounds = 12;
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
+      
+      // Update the user's password in the database
+      await this.db.collection('users').updateOne(
+        { id: user.id },
+        { $set: { password: hashedPassword } }
+      );
+      
+      // Update the local user object
+      user.password = hashedPassword;
+      isPasswordValid = true;
+      
+      console.log(`Password upgraded successfully for user ${user.username}`);
+    }
+    
     if (!isPasswordValid) {
       return undefined;
     }
