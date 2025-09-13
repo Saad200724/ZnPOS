@@ -385,7 +385,20 @@ export class MongoStorage {
           paymentMethod: 1,
           status: 1,
           createdAt: 1,
-          user: { $arrayElemAt: ['$user', 0] },
+          user: {
+            $let: {
+              vars: { userDoc: { $arrayElemAt: ['$user', 0] } },
+              in: {
+                id: '$$userDoc.id',
+                username: '$$userDoc.username',
+                email: '$$userDoc.email',
+                firstName: '$$userDoc.firstName',
+                lastName: '$$userDoc.lastName',
+                role: '$$userDoc.role',
+                isActive: '$$userDoc.isActive'
+              }
+            }
+          },
           customer: { $arrayElemAt: ['$customer', 0] }
         }
       }
