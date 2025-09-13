@@ -138,13 +138,11 @@ export class MongoStorage {
       isPasswordValid = await bcrypt.compare(password, user.password);
     } catch (error) {
       // If bcrypt fails, the password might not be properly hashed
-      console.log(`Bcrypt comparison failed for user ${user.username}, attempting legacy password check`);
+      // Fall through to legacy password check
     }
     
     // If bcrypt fails, check if it's a plaintext password (legacy case)
     if (!isPasswordValid && user.password === password) {
-      console.log(`Legacy plaintext password detected for user ${user.username}, upgrading to bcrypt`);
-      
       // Rehash the password properly
       const saltRounds = 12;
       const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -158,8 +156,6 @@ export class MongoStorage {
       // Update the local user object
       user.password = hashedPassword;
       isPasswordValid = true;
-      
-      console.log(`Password upgraded successfully for user ${user.username}`);
     }
     
     if (!isPasswordValid) {

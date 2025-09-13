@@ -73,115 +73,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     return next();
   }
 
-  // Debug route to check users
-  app.get("/api/debug/users", async (req, res) => {
-    try {
-      const users = await storage.getAllUsers();
-      res.json({ users: users.map(u => ({ 
-        id: u.id, 
-        username: u.username, 
-        email: u.email, 
-        role: u.role, 
-        isActive: u.isActive 
-      })) });
-    } catch (error: any) {
-      console.error("Debug users error:", error);
-      res.status(500).json({ message: error.message });
-    }
-  });
-
-  // Create user with specific credentials
-  app.post("/api/create-meow-user", async (req, res) => {
-    try {
-      // Check if business exists, if not create it
-      let businessId = 4; // Default to existing business ID
-      try {
-        await storage.getBusiness(businessId);
-      } catch {
-        // Create business if it doesn't exist
-        const business = await storage.createBusiness({
-          name: "Meow Meow Pet Shop",
-          email: "admin@meow.com",
-          phone: "123-456-7890",
-          address: "123 Pet Street",
-          taxRate: "10",
-          currency: "USD"
-        });
-        businessId = business.id;
-      }
-      
-      // Create admin user with username admin@meow
-      const user = await storage.createUser({
-        businessId: businessId,
-        username: "admin@meow",
-        email: "admin@meow.com",
-        password: "admin123",
-        firstName: "Admin",
-        lastName: "User",
-        role: "admin",
-        isActive: true,
-        permissions: {
-          pos: true,
-          inventory: true,
-          customers: true,
-          reports: true,
-          employees: true,
-          settings: true
-        }
-      });
-
-      res.json({ message: "Meow user created successfully", user: { username: "admin@meow", id: user.id } });
-    } catch (error: any) {
-      console.error("Meow user creation error:", error);
-      res.status(400).json({ message: error.message });
-    }
-  });
-
-  // Test route to create default admin user
-  app.post("/api/create-test-user", async (req, res) => {
-    try {
-      // Check if user already exists
-      const existingUser = await storage.getUserByUsernameAndPassword("admin@meow", "admin123").catch(() => null);
-      if (existingUser) {
-        return res.json({ message: "Test user already exists", user: { username: "admin@meow" } });
-      }
-
-      // Create business first
-      const business = await storage.createBusiness({
-        name: "Meow Meow Pet Shop",
-        email: "admin@meow.com",
-        phone: "123-456-7890",
-        address: "123 Pet Street",
-        taxRate: "10",
-        currency: "USD"
-      });
-      
-      // Create admin user with username admin@meow
-      const user = await storage.createUser({
-        businessId: business.id,
-        username: "admin@meow",
-        email: "admin@meow.com",
-        password: "admin123",
-        firstName: "Admin",
-        lastName: "User",
-        role: "admin",
-        isActive: true,
-        permissions: {
-          pos: true,
-          inventory: true,
-          customers: true,
-          reports: true,
-          employees: true,
-          settings: true
-        }
-      });
-
-      res.json({ message: "Test user created successfully", user: { username: "admin@meow" }, business });
-    } catch (error: any) {
-      console.error("Test user creation error:", error);
-      res.status(400).json({ message: error.message });
-    }
-  });
 
   // Auth routes
   app.post("/api/register", async (req, res) => {
@@ -222,13 +113,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/login", async (req, res) => {
     try {
       const { username, password } = req.body;
-      console.log(`Login attempt - Username: '${username}', Password: '${password}'`);
       
       const user = await storage.getUserByUsernameAndPassword(username, password);
-      console.log(`User found: ${!!user}, User active: ${user?.isActive}`);
       
       if (!user || !user.isActive) {
-        console.log("Login failed - invalid credentials or inactive user");
         return res.status(401).json({ message: "Invalid credentials" });
       }
 
