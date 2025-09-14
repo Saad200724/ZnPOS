@@ -171,7 +171,7 @@ export default function EmployeesPage() {
             Manage your team members and their access permissions ({employees.length}/10 employees)
           </p>
         </div>
-        
+
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
             <Button 
