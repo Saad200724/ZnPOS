@@ -12,6 +12,7 @@ import {
   LogOut 
 } from "lucide-react";
 import znforgeLogo from "@assets/ZnForge_Logo_1757783430022.png";
+import meowLogo from "@assets/logo_1757859161982.png";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard, permission: null },
@@ -75,10 +76,8 @@ export default function Sidebar() {
       <div className="p-4 mt-auto bg-emerald-600">
         <div className="bg-emerald-700 rounded-lg p-4 mb-4">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center">
-              <span className="text-white font-semibold">
-                {user?.firstName?.charAt(0) || 'U'}{user?.lastName?.charAt(0) || 'S'}
-              </span>
+            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center overflow-hidden">
+              <img src={meowLogo} alt="Meow Meow Pet Shop" className="w-full h-full object-cover" />
             </div>
             <div>
               <p className="font-medium">{user?.username || 'User'}</p>
