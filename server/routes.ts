@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { MongoStorage } from "./mongo-storage";
 import session from "express-session";
-import { insertProductSchema, insertCustomerSchema, insertTransactionSchema, insertUserSchema } from "../shared/schema";
+import { insertProductSchema, insertCustomerSchema, insertTransactionSchema, insertUserSchema } from "../shared/mongo-schemas";
 
 declare module 'express-session' {
   interface SessionData {
