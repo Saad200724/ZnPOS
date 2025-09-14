@@ -223,7 +223,7 @@ export default function Customers() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-600 text-sm font-medium">Total Revenue</p>
-                    <p className="text-3xl font-bold text-gray-900">${totalSpent.toFixed(2)}</p>
+                    <p className="text-3xl font-bold text-gray-900">৳{totalSpent.toFixed(2)}</p>
                   </div>
                   <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                     <DollarSign className="text-blue-600 text-xl" />
@@ -237,10 +237,10 @@ export default function Customers() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-600 text-sm font-medium">Average Spent</p>
-                    <p className="text-3xl font-bold text-gray-900">${averageSpent.toFixed(2)}</p>
+                    <p className="text-3xl font-bold text-gray-900">৳{averageSpent.toFixed(2)}</p>
                   </div>
                   <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                    <span className="text-purple-600 text-xl">$</span>
+                    <span className="text-purple-600 text-xl">৳</span>
                   </div>
                 </div>
               </CardContent>
@@ -335,7 +335,7 @@ export default function Customers() {
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            ${parseFloat(customer.totalSpent || "0").toFixed(2)}
+                            ৳{parseFloat(customer.totalSpent || "0").toFixed(2)}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">

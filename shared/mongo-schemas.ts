@@ -7,7 +7,7 @@ export const insertBusinessSchema = z.object({
   phone: z.string().optional(),
   address: z.string().optional(),
   taxRate: z.string().default("0.0825"),
-  currency: z.string().default("USD"),
+  currency: z.string().default("BDT"),
 });
 
 // User schema

@@ -79,7 +79,7 @@ export default function Reports() {
     { category: "Retail", totalItems: 28, totalValue: 1560, lowStock: 1 },
   ];
 
-  const formatCurrency = (amount: number) => `$${amount.toFixed(2)}`;
+  const formatCurrency = (amount: number) => `৳${amount.toFixed(2)}`;
 
   const handleExportReport = () => {
     // Mock export functionality
@@ -128,7 +128,7 @@ export default function Reports() {
                   <div>
                     <p className="text-gray-600 text-sm font-medium">Total Revenue</p>
                     <p className="text-3xl font-bold text-gray-900">
-                      ${(stats as any)?.todaySales ? parseFloat((stats as any).todaySales) * 30 : 0}
+                      ৳{(stats as any)?.todaySales ? parseFloat((stats as any).todaySales) * 30 : 0}
                     </p>
                     <p className="text-emerald-600 text-sm font-medium mt-1">
                       ↑ {(stats as any)?.todayGrowth || '0'}% vs last period
@@ -165,7 +165,7 @@ export default function Reports() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-600 text-sm font-medium">Average Order</p>
-                    <p className="text-3xl font-bold text-gray-900">${(stats as any)?.averageSale || '0'}</p>
+                    <p className="text-3xl font-bold text-gray-900">৳{(stats as any)?.averageSale || '0'}</p>
                     <p className="text-purple-600 text-sm font-medium mt-1">
                       ↑ {(stats as any)?.averageGrowth || '0'}% vs last period
                     </p>
@@ -250,7 +250,7 @@ export default function Reports() {
                                   <p className="text-sm text-gray-500">{product.soldCount} units sold</p>
                                 </div>
                               </div>
-                              <span className="text-sm font-semibold text-gray-900">${product.revenue}</span>
+                              <span className="text-sm font-semibold text-gray-900">৳{product.revenue}</span>
                             </div>
                           ))
                         )}
@@ -300,7 +300,7 @@ export default function Reports() {
                               }
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              ${transaction.total}
+                              ৳{transaction.total}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <Badge className={
@@ -417,23 +417,23 @@ export default function Reports() {
                       <div className="flex justify-between items-center py-2 border-b">
                         <span className="text-gray-600">Revenue</span>
                         <span className="font-semibold text-green-600">
-                          +${(stats as any)?.todaySales ? (parseFloat((stats as any).todaySales) * 30).toFixed(2) : '0.00'}
+                          +৳{(stats as any)?.todaySales ? (parseFloat((stats as any).todaySales) * 30).toFixed(2) : '0.00'}
                         </span>
                       </div>
                       <div className="flex justify-between items-center py-2 border-b">
                         <span className="text-gray-600">Cost of Goods</span>
                         <span className="font-semibold text-red-600">
-                          -${(stats as any)?.todaySales ? (parseFloat((stats as any).todaySales) * 30 * 0.6).toFixed(2) : '0.00'}
+                          -৳{(stats as any)?.todaySales ? (parseFloat((stats as any).todaySales) * 30 * 0.6).toFixed(2) : '0.00'}
                         </span>
                       </div>
                       <div className="flex justify-between items-center py-2 border-b">
                         <span className="text-gray-600">Operating Expenses</span>
-                        <span className="font-semibold text-red-600">-$2,500.00</span>
+                        <span className="font-semibold text-red-600">-৳2,500.00</span>
                       </div>
                       <div className="flex justify-between items-center py-3 border-t-2 font-bold">
                         <span>Net Profit</span>
                         <span className="text-emerald-600">
-                          +${(stats as any)?.todaySales ? (parseFloat((stats as any).todaySales) * 30 * 0.4 - 2500).toFixed(2) : '0.00'}
+                          +৳{(stats as any)?.todaySales ? (parseFloat((stats as any).todaySales) * 30 * 0.4 - 2500).toFixed(2) : '0.00'}
                         </span>
                       </div>
                     </div>
@@ -449,7 +449,7 @@ export default function Reports() {
                       <div className="bg-gray-50 rounded-lg p-4">
                         <h4 className="font-medium text-gray-900 mb-2">Sales Tax Collected</h4>
                         <p className="text-2xl font-bold text-gray-900">
-                          ${(stats as any)?.todaySales ? (parseFloat((stats as any).todaySales) * 30 * 0.0825).toFixed(2) : '0.00'}
+                          ৳{(stats as any)?.todaySales ? (parseFloat((stats as any).todaySales) * 30 * 0.0825).toFixed(2) : '0.00'}
                         </p>
                         <p className="text-sm text-gray-600 mt-1">
                           Based on 8.25% tax rate for 30-day period
