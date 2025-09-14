@@ -72,7 +72,7 @@ export default function Sidebar() {
       </nav>
       
       {/* User Profile - Fixed at bottom */}
-      <div className="p-4 mt-auto">
+      <div className="p-4 mt-auto bg-emerald-600">
         <div className="bg-emerald-700 rounded-lg p-4 mb-4">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center">
