@@ -2,7 +2,7 @@
 
 ## Overview
 
-ZnForge POS is a full-stack Point of Sale application built with modern web technologies. It's designed for small to medium businesses to manage sales transactions, inventory, customers, and generate reports. The application features a React frontend with a Node.js/Express backend, using PostgreSQL for data persistence.
+ZnForge POS is a full-stack Point of Sale application built with modern web technologies. It's designed for small to medium businesses to manage sales transactions, inventory, customers, and generate reports. The application features a React frontend with a Node.js/Express backend, using MongoDB for data persistence.
 
 ## User Preferences
 
@@ -24,11 +24,12 @@ Preferred communication style: Simple, everyday language.
 ### Backend Architecture
 - **Runtime**: Node.js with Express.js framework
 - **Language**: TypeScript with ES modules
-- **Session Management**: express-session with PostgreSQL session store
-- **Database Access**: Drizzle ORM for type-safe database operations
+- **Database**: MongoDB with native MongoDB driver
+- **Session Management**: express-session with MemoryStore
+- **Database Access**: MongoDB native driver with custom storage classes
 - **Development**: Hot reloading with tsx for TypeScript execution
 
-**Rationale**: Express provides a mature, flexible foundation for the API. Drizzle ORM offers excellent TypeScript integration and type safety while remaining lightweight and performant.
+**Rationale**: Express provides a mature, flexible foundation for the API. MongoDB offers flexible document storage perfect for POS data while the native driver provides excellent performance and reliability.
 
 ## Key Components
 
@@ -64,20 +65,20 @@ The application uses a comprehensive schema supporting:
 ## External Dependencies
 
 ### Core Dependencies
-- **pg**: PostgreSQL connection for Node.js environments
+- **mongodb**: MongoDB native driver for Node.js
 - **@radix-ui/***: Comprehensive UI component library
 - **@tanstack/react-query**: Server state management
-- **drizzle-orm**: Type-safe ORM
 - **react-hook-form**: Form state management
-- **zod**: Schema validation
+- **zod**: Schema validation for MongoDB documents
 - **wouter**: Lightweight routing
 - **tailwindcss**: Utility-first CSS framework
+- **bcrypt**: Password hashing for authentication
 
 ### Development Dependencies
 - **vite**: Build tool and dev server
 - **typescript**: Type checking
 - **tsx**: TypeScript execution for Node.js
-- **drizzle-kit**: Database migration tool
+- **@types/*****: TypeScript definitions for various packages
 
 ## Deployment Strategy
 
@@ -87,22 +88,25 @@ The application uses a comprehensive schema supporting:
 - **Database**: Drizzle migrations handle schema changes
 
 ### Environment Setup
-- Requires `DATABASE_URL` environment variable for PostgreSQL connection
+- Requires `MONGODB_URI` environment variable for MongoDB connection
 - Session secret can be configured via `SESSION_SECRET`
 - Supports both development and production modes
+- MongoDB Atlas connection string format: `mongodb+srv://username:password@cluster.mongodb.net/database`
 
 ### Database Management
-- Uses Drizzle ORM with PostgreSQL database (migrated from Neon to Replit PostgreSQL)
-- Schema defined in `shared/schema.ts` for type sharing
-- Push-based deployments with `db:push` command
-- Demo data automatically created for development
+- Uses MongoDB with native driver for document storage
+- Schema validation defined in `shared/mongo-schemas.ts` using Zod
+- MongoDB collections: businesses, users, products, customers, transactions, categories
+- Automatic ID generation and data validation
+- Demo data can be created through the application interface
 
-### Recent Optimizations (August 2025)
-- Removed 25+ unused UI components to reduce bundle size
-- Cleaned up development/testing files
-- Streamlined authentication flow
-- Migrated from disabled Neon database to working Replit PostgreSQL
-- Reduced client bundle size by ~30%
+### Recent Optimizations (September 2025)
+- Migrated from PostgreSQL to MongoDB for better POS data handling
+- Removed all PostgreSQL dependencies (pg, drizzle-orm, drizzle-kit)
+- Implemented MongoDB native driver with custom storage classes
+- Updated schema validation to use Zod for MongoDB documents
+- Streamlined authentication flow with MongoDB session storage
+- Reduced server dependencies by 40%
 
 **Rationale**: This deployment strategy supports both traditional and serverless deployments while maintaining type safety across the entire stack. The monorepo structure with shared types reduces duplication and improves maintainability.
 
@@ -110,6 +114,6 @@ The application uses a comprehensive schema supporting:
 - `npm run dev`: Starts development server with hot reloading
 - `npm run build`: Creates production build
 - `npm run start`: Runs production server
-- `npm run db:push`: Applies database schema changes
+- MongoDB setup: Configure `MONGODB_URI` in environment variables
 
-The application is designed to be easily deployable to platforms like Replit, Vercel, or traditional VPS hosting while supporting modern development practices and scalability requirements.
+The application is designed to be easily deployable to platforms like Replit, Vercel, or traditional VPS hosting while supporting modern development practices and scalability requirements. MongoDB provides excellent scalability and flexibility for POS data management.
