@@ -16,6 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { UserPlus, Settings, Trash2, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import Sidebar from "@/components/sidebar";
 
 // Form schema for adding employees
 const addEmployeeSchema = z.object({
@@ -158,8 +159,12 @@ export default function EmployeesPage() {
   const canAddEmployee = employees.length < 10;
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
+    <div className="flex h-screen">
+      <Sidebar />
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <main className="flex-1 overflow-auto">
+          <div className="container mx-auto px-4 py-8">
+            <div className="flex justify-between items-center mb-8"></div>
         <div>
           <h1 className="text-3xl font-bold" data-testid="text-page-title">Employee Management</h1>
           <p className="text-muted-foreground mt-2">
@@ -379,6 +384,9 @@ export default function EmployeesPage() {
             </CardContent>
           </Card>
         )}
+            </div>
+          </div>
+        </main>
       </div>
     </div>
   );
