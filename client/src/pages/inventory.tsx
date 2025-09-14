@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Plus, Search, Package, AlertTriangle } from "lucide-react";
+import { formatCurrency } from "@/lib/utils";
 
 interface Product {
   id: number;
@@ -275,13 +276,13 @@ export default function Inventory() {
                   <div>
                     <p className="text-gray-600 text-sm font-medium">Total Stock Value</p>
                     <p className="text-3xl font-bold text-gray-900">
-                      ${products.reduce((sum, product) => 
+                      {formatCurrency(products.reduce((sum, product) => 
                         sum + (parseFloat(product.price) * product.stock), 0
-                      ).toFixed(2)}
+                      ))}
                     </p>
                   </div>
                   <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <span className="text-blue-600 text-xl">$</span>
+                    <span className="text-blue-600 text-xl">৳</span>
                   </div>
                 </div>
               </CardContent>
@@ -353,7 +354,7 @@ export default function Inventory() {
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            ${product.price}
+                            {formatCurrency(product.price)}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                             {product.stock} units

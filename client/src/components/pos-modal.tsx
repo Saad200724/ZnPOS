@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/lib/auth";
+import { formatCurrency } from "@/lib/utils";
 import { Search, Barcode, Plus, Minus, Trash2, CreditCard, Banknote, Smartphone } from "lucide-react";
 
 interface Product {
@@ -235,7 +236,7 @@ export default function POSModal({ isOpen, onClose }: POSModalProps) {
                   >
                     <div className="w-full h-32 bg-gray-200 rounded-lg mb-3"></div>
                     <h4 className="font-medium text-gray-900 mb-1">{product.name}</h4>
-                    <p className="text-emerald-600 font-semibold">৳{product.price}</p>
+                    <p className="text-emerald-600 font-semibold">{formatCurrency(product.price)}</p>
                     <p className="text-xs text-gray-500 mt-1">Stock: {product.stock}</p>
                   </Card>
                 ))}
@@ -307,7 +308,7 @@ export default function POSModal({ isOpen, onClose }: POSModalProps) {
                             <Plus className="h-3 w-3" />
                           </Button>
                         </div>
-                        <span className="font-semibold text-emerald-600">৳{item.total.toFixed(2)}</span>
+                        <span className="font-semibold text-emerald-600">{formatCurrency(item.total)}</span>
                       </div>
                     </Card>
                   ))}
@@ -319,15 +320,15 @@ export default function POSModal({ isOpen, onClose }: POSModalProps) {
             <div className="border-t border-gray-200 pt-4 space-y-3">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">Subtotal:</span>
-                <span className="font-medium">৳{totals.subtotal}</span>
+                <span className="font-medium">{formatCurrency(totals.subtotal)}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">Tax:</span>
-                <span className="font-medium">৳{totals.tax}</span>
+                <span className="font-medium">{formatCurrency(totals.tax)}</span>
               </div>
               <div className="flex justify-between text-lg font-semibold border-t border-gray-200 pt-3">
                 <span>Total:</span>
-                <span className="text-emerald-600">৳{totals.total}</span>
+                <span className="text-emerald-600">{formatCurrency(totals.total)}</span>
               </div>
             </div>
 

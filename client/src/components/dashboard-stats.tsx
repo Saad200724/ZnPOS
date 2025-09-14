@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { DollarSign, Receipt, TrendingUp, AlertTriangle } from "lucide-react";
+import { Banknote, Receipt, TrendingUp, AlertTriangle } from "lucide-react";
+import { formatCurrency } from "@/lib/utils";
 
 interface DashboardStats {
   todaySales: string;
@@ -56,13 +57,13 @@ export default function DashboardStats() {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-gray-600 text-sm font-medium">Today's Sales</p>
-            <p className="text-3xl font-bold text-gray-900">${stats.todaySales}</p>
+            <p className="text-3xl font-bold text-gray-900">{formatCurrency(stats.todaySales)}</p>
             <p className={`${todayGrowth.color} text-sm font-medium mt-1`}>
               {todayGrowth.icon} {todayGrowth.value} from yesterday
             </p>
           </div>
           <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center">
-            <DollarSign className="text-emerald-600 text-xl" />
+            <Banknote className="text-emerald-600 text-xl" />
           </div>
         </div>
       </div>
@@ -88,7 +89,7 @@ export default function DashboardStats() {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-gray-600 text-sm font-medium">Average Sale</p>
-            <p className="text-3xl font-bold text-gray-900">${stats.averageSale}</p>
+            <p className="text-3xl font-bold text-gray-900">{formatCurrency(stats.averageSale)}</p>
             <p className={`${averageGrowth.color} text-sm font-medium mt-1`}>
               {averageGrowth.icon} {averageGrowth.value} from yesterday
             </p>

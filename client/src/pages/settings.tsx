@@ -71,7 +71,7 @@ export default function Settings() {
     darkMode: false,
     compactView: false,
     showProductImages: true,
-    currencySymbol: "$",
+    currencySymbol: "৳",
     dateFormat: "MM/DD/YYYY"
   });
 

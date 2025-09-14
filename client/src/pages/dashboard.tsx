@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Bell, Package, UserPlus, BarChart, Users } from "lucide-react";
+import { formatCurrency } from "@/lib/utils";
 
 interface Transaction {
   id: number;
@@ -170,7 +171,7 @@ export default function Dashboard() {
                                 }
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                ${transaction.total}
+                                {formatCurrency(transaction.total)}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap">
                                 {getStatusBadge(transaction.status)}
@@ -210,7 +211,7 @@ export default function Dashboard() {
                               <p className="text-sm text-gray-500">{product.soldCount} sold</p>
                             </div>
                           </div>
-                          <span className="text-sm font-medium text-gray-900">${product.revenue}</span>
+                          <span className="text-sm font-medium text-gray-900">{formatCurrency(product.revenue)}</span>
                         </div>
                       ))
                     )}

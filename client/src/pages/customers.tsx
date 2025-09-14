@@ -8,7 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { Plus, Search, Users, Star, DollarSign } from "lucide-react";
+import { Plus, Search, Users, Star, Banknote } from "lucide-react";
+import { formatCurrency } from "@/lib/utils";
 
 interface Customer {
   id: number;
@@ -223,10 +224,10 @@ export default function Customers() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-600 text-sm font-medium">Total Revenue</p>
-                    <p className="text-3xl font-bold text-gray-900">৳{totalSpent.toFixed(2)}</p>
+                    <p className="text-3xl font-bold text-gray-900">{formatCurrency(totalSpent)}</p>
                   </div>
                   <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <DollarSign className="text-blue-600 text-xl" />
+                    <Banknote className="text-blue-600 text-xl" />
                   </div>
                 </div>
               </CardContent>
@@ -237,7 +238,7 @@ export default function Customers() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-600 text-sm font-medium">Average Spent</p>
-                    <p className="text-3xl font-bold text-gray-900">৳{averageSpent.toFixed(2)}</p>
+                    <p className="text-3xl font-bold text-gray-900">{formatCurrency(averageSpent)}</p>
                   </div>
                   <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
                     <span className="text-purple-600 text-xl">৳</span>
@@ -335,7 +336,7 @@ export default function Customers() {
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            ৳{parseFloat(customer.totalSpent || "0").toFixed(2)}
+                            {formatCurrency(parseFloat(customer.totalSpent || "0"))}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">

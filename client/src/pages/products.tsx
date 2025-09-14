@@ -8,7 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Plus, Edit, Trash2, Package, DollarSign, Tag } from 'lucide-react';
+import { Plus, Edit, Trash2, Package, Banknote, Tag } from 'lucide-react';
+import { formatCurrency } from '@/lib/utils';
 import { useAuth } from '@/lib/auth';
 
 interface Product {
@@ -384,12 +385,12 @@ export default function Products() {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
-                              <DollarSign className="w-4 h-4 text-green-600 mr-1" />
-                              <span className="text-sm font-medium">${product.price}</span>
+                              <Banknote className="w-4 h-4 text-green-600 mr-1" />
+                              <span className="text-sm font-medium">{formatCurrency(product.price)}</span>
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <span className="text-sm text-gray-600">${product.cost}</span>
+                            <span className="text-sm text-gray-600">{formatCurrency(product.cost)}</span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <span className="text-sm font-medium">{product.stock} units</span>

@@ -7,9 +7,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { DatePickerWithRange } from "@/components/ui/date-range-picker";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { formatCurrency } from "@/lib/utils";
 import { 
   BarChart, 
-  DollarSign, 
+  Banknote, 
   TrendingUp, 
   Package, 
   Users, 
@@ -79,7 +80,6 @@ export default function Reports() {
     { category: "Retail", totalItems: 28, totalValue: 1560, lowStock: 1 },
   ];
 
-  const formatCurrency = (amount: number) => `৳${amount.toFixed(2)}`;
 
   const handleExportReport = () => {
     // Mock export functionality
@@ -128,14 +128,14 @@ export default function Reports() {
                   <div>
                     <p className="text-gray-600 text-sm font-medium">Total Revenue</p>
                     <p className="text-3xl font-bold text-gray-900">
-                      ৳{(stats as any)?.todaySales ? parseFloat((stats as any).todaySales) * 30 : 0}
+                      {formatCurrency((stats as any)?.todaySales ? parseFloat((stats as any).todaySales) : 0)}
                     </p>
                     <p className="text-emerald-600 text-sm font-medium mt-1">
                       ↑ {(stats as any)?.todayGrowth || '0'}% vs last period
                     </p>
                   </div>
                   <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center">
-                    <DollarSign className="text-emerald-600 text-xl" />
+                    <Banknote className="text-emerald-600 text-xl" />
                   </div>
                 </div>
               </CardContent>
@@ -147,7 +147,7 @@ export default function Reports() {
                   <div>
                     <p className="text-gray-600 text-sm font-medium">Total Transactions</p>
                     <p className="text-3xl font-bold text-gray-900">
-                      {(stats as any)?.todayTransactions ? (stats as any).todayTransactions * 30 : 0}
+                      {(stats as any)?.todayTransactions || 0}
                     </p>
                     <p className="text-blue-600 text-sm font-medium mt-1">
                       ↑ {(stats as any)?.transactionGrowth || '0'}% vs last period
@@ -397,7 +397,7 @@ export default function Reports() {
                   <CardContent>
                     <div className="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
                       <div className="text-center">
-                        <DollarSign className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                        <Banknote className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                         <p className="text-gray-500">CLV analysis would be displayed here</p>
                       </div>
                     </div>
@@ -417,23 +417,23 @@ export default function Reports() {
                       <div className="flex justify-between items-center py-2 border-b">
                         <span className="text-gray-600">Revenue</span>
                         <span className="font-semibold text-green-600">
-                          +৳{(stats as any)?.todaySales ? (parseFloat((stats as any).todaySales) * 30).toFixed(2) : '0.00'}
+                          +{formatCurrency((stats as any)?.todaySales ? parseFloat((stats as any).todaySales) : 0)}
                         </span>
                       </div>
                       <div className="flex justify-between items-center py-2 border-b">
                         <span className="text-gray-600">Cost of Goods</span>
                         <span className="font-semibold text-red-600">
-                          -৳{(stats as any)?.todaySales ? (parseFloat((stats as any).todaySales) * 30 * 0.6).toFixed(2) : '0.00'}
+                          -{formatCurrency((stats as any)?.todaySales ? parseFloat((stats as any).todaySales) * 0.6 : 0)}
                         </span>
                       </div>
                       <div className="flex justify-between items-center py-2 border-b">
                         <span className="text-gray-600">Operating Expenses</span>
-                        <span className="font-semibold text-red-600">-৳2,500.00</span>
+                        <span className="font-semibold text-red-600">{formatCurrency(-2500)}</span>
                       </div>
                       <div className="flex justify-between items-center py-3 border-t-2 font-bold">
                         <span>Net Profit</span>
                         <span className="text-emerald-600">
-                          +৳{(stats as any)?.todaySales ? (parseFloat((stats as any).todaySales) * 30 * 0.4 - 2500).toFixed(2) : '0.00'}
+                          +{formatCurrency((stats as any)?.todaySales ? parseFloat((stats as any).todaySales) * 0.4 - 2500 : -2500)}
                         </span>
                       </div>
                     </div>
@@ -449,7 +449,7 @@ export default function Reports() {
                       <div className="bg-gray-50 rounded-lg p-4">
                         <h4 className="font-medium text-gray-900 mb-2">Sales Tax Collected</h4>
                         <p className="text-2xl font-bold text-gray-900">
-                          ৳{(stats as any)?.todaySales ? (parseFloat((stats as any).todaySales) * 30 * 0.0825).toFixed(2) : '0.00'}
+                          {formatCurrency((stats as any)?.todaySales ? parseFloat((stats as any).todaySales) * 0.0825 : 0)}
                         </p>
                         <p className="text-sm text-gray-600 mt-1">
                           Based on 8.25% tax rate for 30-day period
