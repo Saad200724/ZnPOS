@@ -269,49 +269,37 @@ export default function Dashboard() {
           <div className="mt-8">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Button 
-                variant="outline" 
-                className="h-auto min-h-[140px] p-6 text-left justify-start flex-col items-start w-full"
-              >
+              <div className="border border-gray-200 rounded-lg p-6 hover:border-gray-300 transition-colors cursor-pointer bg-white">
                 <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center mb-4">
                   <Package className="text-emerald-600 text-xl" />
                 </div>
                 <h4 className="font-semibold text-gray-900 mb-2">Add Product</h4>
-                <p className="text-sm text-gray-600 break-words leading-relaxed">Add new inventory items to your catalog</p>
-              </Button>
+                <p className="text-sm text-gray-600 leading-relaxed overflow-hidden">Add new inventory items to your catalog</p>
+              </div>
 
-              <Button 
-                variant="outline" 
-                className="h-auto min-h-[140px] p-6 text-left justify-start flex-col items-start w-full"
-              >
+              <div className="border border-gray-200 rounded-lg p-6 hover:border-gray-300 transition-colors cursor-pointer bg-white">
                 <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
                   <UserPlus className="text-blue-600 text-xl" />
                 </div>
                 <h4 className="font-semibold text-gray-900 mb-2">Add Customer</h4>
-                <p className="text-sm text-gray-600 break-words leading-relaxed">Register new customers and manage profiles</p>
-              </Button>
+                <p className="text-sm text-gray-600 leading-relaxed overflow-hidden">Register new customers and manage profiles</p>
+              </div>
 
-              <Button 
-                variant="outline" 
-                className="h-auto min-h-[140px] p-6 text-left justify-start flex-col items-start w-full"
-              >
+              <div className="border border-gray-200 rounded-lg p-6 hover:border-gray-300 transition-colors cursor-pointer bg-white">
                 <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
                   <BarChart className="text-purple-600 text-xl" />
                 </div>
                 <h4 className="font-semibold text-gray-900 mb-2">Generate Report</h4>
-                <p className="text-sm text-gray-600 break-words leading-relaxed">Create detailed sales and inventory reports</p>
-              </Button>
+                <p className="text-sm text-gray-600 leading-relaxed overflow-hidden">Create detailed sales and inventory reports</p>
+              </div>
 
-              <Button 
-                variant="outline" 
-                className="h-auto min-h-[140px] p-6 text-left justify-start flex-col items-start w-full"
-              >
+              <div className="border border-gray-200 rounded-lg p-6 hover:border-gray-300 transition-colors cursor-pointer bg-white">
                 <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
                   <Users className="text-indigo-600 text-xl" />
                 </div>
                 <h4 className="font-semibold text-gray-900 mb-2">Manage Staff</h4>
-                <p className="text-sm text-gray-600 break-words leading-relaxed">Handle employee schedules and permissions</p>
-              </Button>
+                <p className="text-sm text-gray-600 leading-relaxed overflow-hidden">Handle employee schedules and permissions</p>
+              </div>
             </div>
           </div>
         </main>
