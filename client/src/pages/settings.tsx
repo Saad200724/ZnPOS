@@ -35,8 +35,6 @@ export default function Settings() {
     phone: business?.phone || "",
     address: business?.address || "",
     taxRate: business?.taxRate || "8.25",
-    currency: business?.currency || "USD",
-    timezone: "America/New_York",
     receiptFooter: "Thank you for your business!"
   });
 
@@ -226,36 +224,7 @@ export default function Settings() {
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <Label htmlFor="currency">Currency</Label>
-                      <Select value={businessSettings.currency} onValueChange={(value) => setBusinessSettings({...businessSettings, currency: value})}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="USD">USD - US Dollar</SelectItem>
-                          <SelectItem value="EUR">EUR - Euro</SelectItem>
-                          <SelectItem value="GBP">GBP - British Pound</SelectItem>
-                          <SelectItem value="CAD">CAD - Canadian Dollar</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <Label htmlFor="timezone">Timezone</Label>
-                      <Select value={businessSettings.timezone} onValueChange={(value) => setBusinessSettings({...businessSettings, timezone: value})}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="America/New_York">Eastern Time</SelectItem>
-                          <SelectItem value="America/Chicago">Central Time</SelectItem>
-                          <SelectItem value="America/Denver">Mountain Time</SelectItem>
-                          <SelectItem value="America/Los_Angeles">Pacific Time</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
+                  
 
                   <div>
                     <Label htmlFor="receiptFooter">Receipt Footer Message</Label>
