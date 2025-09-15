@@ -271,46 +271,46 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <Button 
                 variant="outline" 
-                className="h-auto p-6 text-left justify-start flex-col items-start"
+                className="h-auto min-h-[140px] p-6 text-left justify-start flex-col items-start w-full"
               >
                 <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center mb-4">
                   <Package className="text-emerald-600 text-xl" />
                 </div>
                 <h4 className="font-semibold text-gray-900 mb-2">Add Product</h4>
-                <p className="text-sm text-gray-600">Add new inventory items to your catalog</p>
+                <p className="text-sm text-gray-600 break-words leading-relaxed">Add new inventory items to your catalog</p>
               </Button>
 
               <Button 
                 variant="outline" 
-                className="h-auto p-6 text-left justify-start flex-col items-start"
+                className="h-auto min-h-[140px] p-6 text-left justify-start flex-col items-start w-full"
               >
                 <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
                   <UserPlus className="text-blue-600 text-xl" />
                 </div>
                 <h4 className="font-semibold text-gray-900 mb-2">Add Customer</h4>
-                <p className="text-sm text-gray-600">Register new customers and manage profiles</p>
+                <p className="text-sm text-gray-600 break-words leading-relaxed">Register new customers and manage profiles</p>
               </Button>
 
               <Button 
                 variant="outline" 
-                className="h-auto p-6 text-left justify-start flex-col items-start"
+                className="h-auto min-h-[140px] p-6 text-left justify-start flex-col items-start w-full"
               >
                 <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
                   <BarChart className="text-purple-600 text-xl" />
                 </div>
                 <h4 className="font-semibold text-gray-900 mb-2">Generate Report</h4>
-                <p className="text-sm text-gray-600">Create detailed sales and inventory reports</p>
+                <p className="text-sm text-gray-600 break-words leading-relaxed">Create detailed sales and inventory reports</p>
               </Button>
 
               <Button 
                 variant="outline" 
-                className="h-auto p-6 text-left justify-start flex-col items-start"
+                className="h-auto min-h-[140px] p-6 text-left justify-start flex-col items-start w-full"
               >
                 <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
                   <Users className="text-indigo-600 text-xl" />
                 </div>
                 <h4 className="font-semibold text-gray-900 mb-2">Manage Staff</h4>
-                <p className="text-sm text-gray-600">Handle employee schedules and permissions</p>
+                <p className="text-sm text-gray-600 break-words leading-relaxed">Handle employee schedules and permissions</p>
               </Button>
             </div>
           </div>
