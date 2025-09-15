@@ -277,6 +277,15 @@ export class MongoStorage {
     return business || undefined;
   }
 
+  async updateBusiness(id: number, updates: Partial<Omit<MongoBusiness, 'id' | 'createdAt'>>): Promise<MongoBusiness | undefined> {
+    const result = await this.db.collection('businesses').findOneAndUpdate(
+      { id },
+      { $set: updates },
+      { returnDocument: 'after' }
+    );
+    return result as MongoBusiness | undefined;
+  }
+
   // Categories
   async getCategories(businessId: number): Promise<MongoCategory[]> {
     const categories = await this.db.collection('categories').find({ businessId }).toArray() as MongoCategory[];

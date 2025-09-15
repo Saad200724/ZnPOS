@@ -338,25 +338,10 @@ export default function POSModal({ isOpen, onClose }: POSModalProps) {
                 onClick={() => processPayment("cash")}
                 disabled={cart.length === 0 || transactionMutation.isPending}
                 className="w-full btn-primary"
+                data-testid="button-cash-payment"
               >
                 <Banknote className="w-4 h-4 mr-2" />
                 Cash Payment
-              </Button>
-              <Button
-                onClick={() => processPayment("card")}
-                disabled={cart.length === 0 || transactionMutation.isPending}
-                className="w-full bg-blue-500 hover:bg-blue-600 text-white"
-              >
-                <CreditCard className="w-4 h-4 mr-2" />
-                Card Payment
-              </Button>
-              <Button
-                onClick={() => processPayment("mobile")}
-                disabled={cart.length === 0 || transactionMutation.isPending}
-                className="w-full bg-gray-500 hover:bg-gray-600 text-white"
-              >
-                <Smartphone className="w-4 h-4 mr-2" />
-                Mobile Payment
               </Button>
             </div>
 

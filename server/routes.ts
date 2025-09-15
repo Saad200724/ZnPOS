@@ -331,6 +331,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Settings routes
+  app.put("/api/settings/business", requireAuth, requirePermission('settings'), async (req, res) => {
+    try {
+      const businessId = req.session.user!.businessId;
+      const { name, email, phone, address, taxRate, currency, timezone, receiptFooter } = req.body;
+      
+      const updates = {
+        name,
+        email,
+        phone,
+        address,
+        taxRate,
+        currency,
+        timezone,
+        receiptFooter
+      };
+
+      const updatedBusiness = await storage.updateBusiness(businessId, updates);
+      if (!updatedBusiness) {
+        return res.status(404).json({ message: "Business not found" });
+      }
+      
+      res.json(updatedBusiness);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

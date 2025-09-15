@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/lib/auth";
+import { apiRequest } from "@/lib/queryClient";
 import { 
   Settings as SettingsIcon, 
   Building, 
@@ -41,7 +42,7 @@ export default function Settings() {
 
   const [paymentSettings, setPaymentSettings] = useState({
     enableCash: true,
-    enableCard: true,
+    enableCard: false,
     enableMobile: false,
     processingFee: "2.9",
     autoCalculateTax: true,
@@ -77,8 +78,11 @@ export default function Settings() {
 
   const updateSettingsMutation = useMutation({
     mutationFn: async (settingsData: any) => {
-      // Mock API call - in real implementation this would call the backend
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      if (settingsData.type === 'business') {
+        const response = await apiRequest('PUT', '/api/settings/business', settingsData.data);
+        return await response.json();
+      }
+      // For other settings types, return the data as-is for now
       return settingsData;
     },
     onSuccess: () => {
@@ -297,31 +301,31 @@ export default function Settings() {
                         />
                       </div>
                       
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between opacity-60">
                         <div className="flex items-center space-x-3">
                           <CreditCard className="w-5 h-5 text-gray-500" />
                           <div>
                             <p className="font-medium">Card Payments</p>
-                            <p className="text-sm text-gray-500">Credit and debit cards</p>
+                            <p className="text-sm text-gray-500">Credit and debit cards - <span className="text-orange-500 font-medium">COMING SOON</span></p>
                           </div>
                         </div>
                         <Switch
-                          checked={paymentSettings.enableCard}
-                          onCheckedChange={(checked) => setPaymentSettings({...paymentSettings, enableCard: checked})}
+                          checked={false}
+                          disabled={true}
                         />
                       </div>
                       
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between opacity-60">
                         <div className="flex items-center space-x-3">
                           <CreditCard className="w-5 h-5 text-gray-500" />
                           <div>
                             <p className="font-medium">Mobile Payments</p>
-                            <p className="text-sm text-gray-500">Apple Pay, Google Pay, etc.</p>
+                            <p className="text-sm text-gray-500">Apple Pay, Google Pay, etc. - <span className="text-orange-500 font-medium">COMING SOON</span></p>
                           </div>
                         </div>
                         <Switch
-                          checked={paymentSettings.enableMobile}
-                          onCheckedChange={(checked) => setPaymentSettings({...paymentSettings, enableMobile: checked})}
+                          checked={false}
+                          disabled={true}
                         />
                       </div>
                     </div>
