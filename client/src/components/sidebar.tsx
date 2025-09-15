@@ -52,8 +52,8 @@ export default function Sidebar() {
               if (!item.permission) return true;
               // Show all to admin users
               if (user?.role === 'admin') return true;
-              // For non-admin users, show basic pages (could add permission logic later)
-              return false;
+              // For non-admin users, check their specific permissions
+              return user?.permissions?.[item.permission] === true;
             })
             .map((item) => {
               const Icon = item.icon;

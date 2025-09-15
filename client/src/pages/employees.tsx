@@ -345,7 +345,7 @@ export default function EmployeesPage() {
                       <div>
                         <h4 className="text-sm font-medium mb-3">Access Permissions</h4>
                         <div className="grid grid-cols-2 gap-4">
-                    {Object.entries(employee.permissions).map(([permission, enabled]) => (
+                    {(Object.entries(employee.permissions) as [string, boolean][]).map(([permission, enabled]) => (
                             <div key={permission} className="flex items-center justify-between">
                               <Label htmlFor={`${employee.id}-${permission}`} className="capitalize">
                                 {permission === 'pos' ? 'Point of Sale' : permission}

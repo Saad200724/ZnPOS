@@ -11,6 +11,14 @@ export interface User {
   businessId: number;
   isActive: boolean | null;
   createdAt: Date | null;
+  permissions?: {
+    pos: boolean;
+    inventory: boolean;
+    customers: boolean;
+    reports: boolean;
+    employees: boolean;
+    settings: boolean;
+  };
 }
 
 export interface AuthState {
