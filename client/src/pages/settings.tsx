@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/lib/auth";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import { 
   Settings as SettingsIcon, 
   Building, 
@@ -85,7 +85,12 @@ export default function Settings() {
       // For other settings types, return the data as-is for now
       return settingsData;
     },
-    onSuccess: () => {
+    onSuccess: (data, variables) => {
+      if (variables.type === 'business') {
+        // Invalidate queries that depend on business data
+        queryClient.invalidateQueries({ queryKey: ["/api/me"] });
+        queryClient.invalidateQueries({ queryKey: ["/api/dashboard/stats"] });
+      }
       toast({
         title: "Settings Updated",
         description: "Your settings have been saved successfully.",
