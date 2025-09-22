@@ -265,7 +265,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       const createdTransaction = await storage.createTransaction(transactionData, items);
-      res.json(createdTransaction);
+      res.json({ ...createdTransaction, invoiceId: createdTransaction.id });
     } catch (error: any) {
       res.status(400).json({ message: error.message });
     }
@@ -354,6 +354,158 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       res.json(updatedBusiness);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  // Invoice routes
+  app.get("/api/invoices/:id", requireAuth, requirePermission('pos'), async (req, res) => {
+    try {
+      const invoiceId = parseInt(req.params.id);
+      const businessId = req.session.user!.businessId;
+      
+      const transaction = await storage.getTransactionById(invoiceId, businessId);
+      if (!transaction) {
+        return res.status(404).json({ message: "Invoice not found" });
+      }
+      
+      const items = await storage.getTransactionItems(invoiceId);
+      const business = await storage.getBusiness(businessId);
+      
+      // Build invoice response
+      const invoice = {
+        _id: transaction.id,
+        invoiceNumber: transaction.transactionNumber,
+        orderId: transaction.transactionNumber,
+        userId: transaction.userId.toString(),
+        customerInfo: transaction.customer ? {
+          name: `${transaction.customer.firstName} ${transaction.customer.lastName}`,
+          email: transaction.customer.email || '',
+          phone: transaction.customer.phone || '',
+          address: transaction.customer.address || ''
+        } : {
+          name: 'Walk-in Customer',
+          email: '',
+          phone: '',
+          address: ''
+        },
+        items: items.map(item => ({
+          productId: item.productId.toString(),
+          name: item.name,
+          price: parseFloat(item.price),
+          quantity: item.quantity,
+          image: item.image || '/placeholder-product.png'
+        })),
+        subtotal: parseFloat(transaction.subtotal),
+        total: parseFloat(transaction.total),
+        paymentMethod: transaction.paymentMethod,
+        paymentStatus: transaction.status === 'completed' ? 'Paid' : 'Pending',
+        orderDate: transaction.createdAt.toISOString(),
+        createdAt: transaction.createdAt.toISOString(),
+        updatedAt: transaction.createdAt.toISOString(),
+        business: business
+      };
+      
+      res.json(invoice);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  app.get("/api/invoices/download/:id", requireAuth, requirePermission('pos'), async (req, res) => {
+    try {
+      const invoiceId = parseInt(req.params.id);
+      const businessId = req.session.user!.businessId;
+      
+      const transaction = await storage.getTransactionById(invoiceId, businessId);
+      if (!transaction) {
+        return res.status(404).json({ message: "Invoice not found" });
+      }
+      
+      const items = await storage.getTransactionItems(invoiceId);
+      const business = await storage.getBusiness(businessId);
+      
+      // Helper function to escape HTML
+      const escapeHtml = (text: string | null | undefined) => {
+        if (!text) return '';
+        return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+      };
+
+      // Generate HTML invoice
+      const html = `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice ${escapeHtml(transaction.transactionNumber)}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .business-info { margin-bottom: 20px; }
+        .customer-info { margin-bottom: 20px; }
+        .items-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        .items-table th, .items-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        .items-table th { background-color: #f2f2f2; }
+        .total-section { text-align: right; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>${escapeHtml(business?.name) || 'ZnForge POS'}</h1>
+        <h2>INVOICE #${escapeHtml(transaction.transactionNumber)}</h2>
+        <p>Date: ${new Date(transaction.createdAt).toLocaleDateString()}</p>
+    </div>
+    
+    <div class="business-info">
+        <h3>From:</h3>
+        <p>${escapeHtml(business?.name) || 'ZnForge POS'}<br>
+        ${escapeHtml(business?.email)}<br>
+        ${escapeHtml(business?.phone)}<br>
+        ${escapeHtml(business?.address)}</p>
+    </div>
+    
+    <div class="customer-info">
+        <h3>Bill To:</h3>
+        <p>${transaction.customer ? `${escapeHtml(transaction.customer.firstName)} ${escapeHtml(transaction.customer.lastName)}` : 'Walk-in Customer'}<br>
+        ${escapeHtml(transaction.customer?.email)}<br>
+        ${escapeHtml(transaction.customer?.phone)}<br>
+        ${escapeHtml(transaction.customer?.address)}</p>
+    </div>
+    
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${items.map(item => `
+            <tr>
+                <td>${item.name}</td>
+                <td>${item.quantity}</td>
+                <td>${business?.currency || '$'}${parseFloat(item.price).toFixed(2)}</td>
+                <td>${business?.currency || '$'}${(parseFloat(item.price) * item.quantity).toFixed(2)}</td>
+            </tr>
+            `).join('')}
+        </tbody>
+    </table>
+    
+    <div class="total-section">
+        <p><strong>Subtotal: ${business?.currency || '$'}${parseFloat(transaction.subtotal).toFixed(2)}</strong></p>
+        <p><strong>Tax: ${business?.currency || '$'}${parseFloat(transaction.taxAmount || '0').toFixed(2)}</strong></p>
+        <p><strong>Total: ${business?.currency || '$'}${parseFloat(transaction.total).toFixed(2)}</strong></p>
+        <p>Payment Method: ${transaction.paymentMethod}</p>
+        <p>Status: ${transaction.status === 'completed' ? 'Paid' : 'Pending'}</p>
+    </div>
+</body>
+</html>`;
+      
+      res.setHeader('Content-Type', 'text/html');
+      res.setHeader('Content-Disposition', `attachment; filename="invoice-${transaction.transactionNumber}.html"`);
+      res.send(html);
     } catch (error: any) {
       res.status(400).json({ message: error.message });
     }

@@ -135,12 +135,21 @@ export default function Products() {
 
   const handleAddProduct = (e: React.FormEvent) => {
     e.preventDefault();
-    addProductMutation.mutate({
-      ...newProduct,
-      categoryId: parseInt(newProduct.categoryId),
-      price: parseFloat(newProduct.price),
-      cost: parseFloat(newProduct.cost)
-    });
+    
+    // Prepare the product data with proper validation
+    const productData = {
+      name: newProduct.name.trim(),
+      description: newProduct.description.trim() || undefined,
+      price: newProduct.price.trim(),
+      cost: newProduct.cost.trim() || "0.00",
+      sku: newProduct.sku.trim() || undefined,
+      barcode: newProduct.barcode.trim() || undefined,
+      categoryId: newProduct.categoryId ? parseInt(newProduct.categoryId) : undefined,
+      stock: parseInt(newProduct.stock) || 0,
+      lowStockThreshold: parseInt(newProduct.lowStockThreshold) || 5
+    };
+    
+    addProductMutation.mutate(productData);
   };
 
   const handleEditProduct = (e: React.FormEvent) => {
@@ -151,8 +160,8 @@ export default function Products() {
       id: selectedProduct.id,
       name: selectedProduct.name,
       description: selectedProduct.description,
-      price: parseFloat(selectedProduct.price),
-      cost: parseFloat(selectedProduct.cost),
+      price: selectedProduct.price,
+      cost: selectedProduct.cost,
       sku: selectedProduct.sku,
       barcode: selectedProduct.barcode,
       categoryId: selectedProduct.categoryId,
@@ -260,12 +269,13 @@ export default function Products() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="category">Category *</Label>
+                      <Label htmlFor="category">Category</Label>
                       <Select value={newProduct.categoryId} onValueChange={(value) => setNewProduct({...newProduct, categoryId: value})}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select category" />
+                          <SelectValue placeholder="Select category (optional)" />
                         </SelectTrigger>
                         <SelectContent>
+                          <SelectItem value="">No Category</SelectItem>
                           {categories.map((category: Category) => (
                             <SelectItem key={category.id} value={category.id.toString()}>
                               {category.name}

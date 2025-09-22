@@ -12,6 +12,7 @@ import Employees from "@/pages/employees";
 import Reports from "@/pages/reports";
 import Settings from "@/pages/settings";
 import Login from "@/pages/login";
+import InvoicePage from "@/pages/invoice";
 import NotFound from "@/pages/not-found";
 import { useAuth } from "./lib/auth";
 
@@ -45,6 +46,7 @@ function Router() {
       <Route path="/employees" component={Employees} />
       <Route path="/reports" component={Reports} />
       <Route path="/settings" component={Settings} />
+      <Route path="/invoice/:invoiceId" component={InvoicePage} />
       <Route component={NotFound} />
     </Switch>
   );

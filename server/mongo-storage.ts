@@ -475,6 +475,93 @@ export class MongoStorage {
     return newTransaction;
   }
 
+  // Invoice-related methods
+  async getTransactionById(id: number, businessId: number): Promise<any | undefined> {
+    const pipeline = [
+      { $match: { id, businessId } },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'userId',
+          foreignField: 'id',
+          as: 'user'
+        }
+      },
+      {
+        $lookup: {
+          from: 'customers',
+          localField: 'customerId',
+          foreignField: 'id',
+          as: 'customer'
+        }
+      },
+      {
+        $project: {
+          id: 1,
+          businessId: 1,
+          customerId: 1,
+          userId: 1,
+          transactionNumber: 1,
+          subtotal: 1,
+          taxAmount: 1,
+          total: 1,
+          paymentMethod: 1,
+          status: 1,
+          createdAt: 1,
+          user: {
+            $let: {
+              vars: { userDoc: { $arrayElemAt: ['$user', 0] } },
+              in: {
+                id: '$$userDoc.id',
+                username: '$$userDoc.username',
+                email: '$$userDoc.email',
+                firstName: '$$userDoc.firstName',
+                lastName: '$$userDoc.lastName',
+                role: '$$userDoc.role',
+                isActive: '$$userDoc.isActive'
+              }
+            }
+          },
+          customer: { $arrayElemAt: ['$customer', 0] }
+        }
+      }
+    ];
+
+    const results = await this.db.collection('transactions').aggregate(pipeline).toArray();
+    return results[0] || undefined;
+  }
+
+  async getTransactionItems(transactionId: number): Promise<any[]> {
+    const pipeline = [
+      { $match: { transactionId } },
+      {
+        $lookup: {
+          from: 'products',
+          localField: 'productId',
+          foreignField: 'id',
+          as: 'product'
+        }
+      },
+      {
+        $unwind: '$product'
+      },
+      {
+        $project: {
+          id: 1,
+          transactionId: 1,
+          productId: '$product.id',
+          name: '$product.name',
+          price: '$unitPrice',
+          quantity: 1,
+          total: 1,
+          image: { $ifNull: ['$product.image', '/placeholder-product.png'] }
+        }
+      }
+    ];
+
+    return await this.db.collection('transactionItems').aggregate(pipeline).toArray();
+  }
+
   async getDashboardStats(businessId: number): Promise<{
     todaySales: string;
     todayTransactions: number;
