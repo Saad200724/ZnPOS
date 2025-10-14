@@ -198,6 +198,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/products", requireAuth, requirePermission('inventory'), async (req, res) => {
     try {
       const products = await storage.getProducts(req.session.user!.businessId);
+      console.log('DEBUG - Products from DB:', JSON.stringify(products, null, 2));
       res.json(products);
     } catch (error: any) {
       res.status(400).json({ message: error.message });
@@ -223,6 +224,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const updates = insertProductSchema.partial().parse(req.body);
       const product = await storage.updateProduct(productId, req.session.user!.businessId, updates);
       res.json(product);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  // Bulk update products (for migration/data fixes)
+  app.post("/api/products/bulk-update", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const { updates } = req.body; // Array of { id, stock?, image? }
+      const businessId = req.session.user!.businessId;
+      const results = [];
+      
+      for (const update of updates) {
+        const product = await storage.updateProduct(update.id, businessId, update);
+        results.push(product);
+      }
+      
+      res.json({ updated: results.length, products: results });
     } catch (error: any) {
       res.status(400).json({ message: error.message });
     }

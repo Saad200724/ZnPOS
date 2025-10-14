@@ -13,6 +13,7 @@ import Reports from "@/pages/reports";
 import Settings from "@/pages/settings";
 import Login from "@/pages/login";
 import InvoicePage from "@/pages/invoice";
+import FixProducts from "@/pages/fix-products";
 import NotFound from "@/pages/not-found";
 import { useAuth } from "./lib/auth";
 
@@ -47,6 +48,7 @@ function Router() {
       <Route path="/reports" component={Reports} />
       <Route path="/settings" component={Settings} />
       <Route path="/invoice/:invoiceId" component={InvoicePage} />
+      <Route path="/fix-products" component={FixProducts} />
       <Route component={NotFound} />
     </Switch>
   );
