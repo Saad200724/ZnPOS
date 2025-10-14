@@ -50,6 +50,7 @@ export interface MongoProduct {
   cost: string;
   stock: number;
   lowStockThreshold: number;
+  image?: string;
   isActive: boolean;
   createdAt: Date;
 }

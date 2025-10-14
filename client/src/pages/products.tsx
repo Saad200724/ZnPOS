@@ -24,6 +24,7 @@ interface Product {
   barcode?: string;
   stock: number;
   lowStockThreshold: number;
+  image?: string;
   category?: {
     id: number;
     name: string;
@@ -51,7 +52,8 @@ export default function Products() {
     barcode: '',
     categoryId: '',
     stock: 0,
-    lowStockThreshold: 5
+    lowStockThreshold: 5,
+    image: ''
   });
 
   // Fetch products
@@ -97,7 +99,8 @@ export default function Products() {
         barcode: '',
         categoryId: '',
         stock: 0,
-        lowStockThreshold: 5
+        lowStockThreshold: 5,
+        image: ''
       });
     }
   });
@@ -145,8 +148,9 @@ export default function Products() {
       sku: newProduct.sku.trim() || undefined,
       barcode: newProduct.barcode.trim() || undefined,
       categoryId: newProduct.categoryId ? parseInt(newProduct.categoryId) : undefined,
-      stock: parseInt(newProduct.stock) || 0,
-      lowStockThreshold: parseInt(newProduct.lowStockThreshold) || 5
+      stock: newProduct.stock || 0,
+      lowStockThreshold: newProduct.lowStockThreshold || 5,
+      image: newProduct.image.trim() || undefined
     };
     
     addProductMutation.mutate(productData);
@@ -166,7 +170,8 @@ export default function Products() {
       barcode: selectedProduct.barcode,
       categoryId: selectedProduct.categoryId,
       stock: selectedProduct.stock,
-      lowStockThreshold: selectedProduct.lowStockThreshold
+      lowStockThreshold: selectedProduct.lowStockThreshold,
+      image: selectedProduct.image
     });
   };
 
@@ -313,6 +318,16 @@ export default function Products() {
                         onChange={(e) => setNewProduct({...newProduct, barcode: e.target.value})}
                       />
                     </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="image">Image URL</Label>
+                    <Input
+                      id="image"
+                      value={newProduct.image}
+                      onChange={(e) => setNewProduct({...newProduct, image: e.target.value})}
+                      placeholder="https://example.com/image.jpg"
+                    />
                   </div>
 
                   <div className="flex justify-end space-x-3">
@@ -550,6 +565,16 @@ export default function Products() {
                       onChange={(e) => setSelectedProduct({...selectedProduct, barcode: e.target.value})}
                     />
                   </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="edit-image">Image URL</Label>
+                  <Input
+                    id="edit-image"
+                    value={selectedProduct.image || ''}
+                    onChange={(e) => setSelectedProduct({...selectedProduct, image: e.target.value})}
+                    placeholder="https://example.com/image.jpg"
+                  />
                 </div>
 
                 <div className="flex justify-end space-x-3">

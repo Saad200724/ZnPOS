@@ -217,6 +217,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.put("/api/products/:id", requireAuth, requirePermission('inventory'), async (req, res) => {
+    try {
+      const productId = parseInt(req.params.id);
+      const updates = insertProductSchema.partial().parse(req.body);
+      const product = await storage.updateProduct(productId, req.session.user!.businessId, updates);
+      res.json(product);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
   // Customers routes
   app.get("/api/customers", requireAuth, requirePermission('customers'), async (req, res) => {
     try {

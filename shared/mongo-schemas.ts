@@ -56,6 +56,7 @@ export const insertProductSchema = z.object({
   cost: z.string().default("0.00"),
   stock: z.number().default(0),
   lowStockThreshold: z.number().default(5),
+  image: z.string().optional(),
   isActive: z.boolean().default(true),
 });
 
